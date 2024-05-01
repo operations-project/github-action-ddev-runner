@@ -2,12 +2,16 @@ name: 'Launch a site with DDEV'
 description: 'Launches a new site using DDEV.'
 inputs:
   ddev-project-name:
-    description: "The DDEV project name to use for this environment."
+    description: "The DDEV project name to use for this environment. Will be used in the URL."
     required: false
     default: "${{ github.event.repository.name }}.pr${{ github.event.number }}"
 
   ddev-project-tld:
-    description: "The DDEV project's project_tld."
+    description: "The DDEV project's project_tld. If not specified, the global DDEV project_tld will be used."
+    required: false
+
+  ddev-fqdns:
+    description: "A list of domains to apply to this environment. Must be a string because of github actions."
     required: false
 
   git-reference:
@@ -75,7 +79,12 @@ runs:
         git reset --hard origin/${{ inputs.git-reference }}
         echo "Post deployment git status: $(git status)"
         echo "name: ${{ inputs.ddev-project-name }}" > .ddev/config.z.yml
-        echo "project_tld: ${{ inputs.ddev-project-tld }}" >> .ddev/config.z.yml
+        if [[ -n "${{ inputs.ddev-project-tld }}" ]]; then
+          echo "project_tld: ${{ inputs.ddev-project-tld }}" >> .ddev/config.z.yml
+        fi
+        if [[ -n "${{ inputs.ddev-fqdns }}" ]]; then
+          echo "additional_fqdns: ${{ inputs.ddev-fqdns }}" >> .ddev/config.z.yml
+        fi
 
     # Secrets: https://github.com/thinkdrop/thinkdrop.net/settings/secrets/actions
     # To retrieve SSH_KNOWN_HOSTS string:
