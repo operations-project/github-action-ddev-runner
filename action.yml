@@ -87,7 +87,8 @@ runs:
           echo "project_tld: ${{ inputs.ddev-project-tld }}" >> .ddev/config.z.yml
         fi
         if [[ -n "${{ inputs.ddev-fqdns }}" ]]; then
-          echo "additional_fqdns:\n  ${{ inputs.ddev-fqdns }}" >> .ddev/config.z.yml
+          echo "additional_fqdns:" >> .ddev/config.z.yml
+          echo "  ${{ inputs.ddev-fqdns }}" >> .ddev/config.z.yml
         fi
 
     # Secrets: https://github.com/thinkdrop/thinkdrop.net/settings/secrets/actions
