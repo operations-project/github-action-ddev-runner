@@ -59,7 +59,7 @@ jobs:
 
         # A list of domains to apply to this environment. Must be a string because of github actions.
         ddev-fqdns: |
-          - www.thinkdrop.net
+          - preview.${{ github.event.number }}.ci.thinkdrop.net
 
 # ... then your own project steps ...
 ```
