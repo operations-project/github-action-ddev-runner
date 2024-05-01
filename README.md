@@ -36,7 +36,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: operations-platform/ddev-site:v1
+    - uses: operations-platform/site-server-ddev@main
       with:
         # Set to "yes" to run the "sync-command". THIS WILL DESTROY THE SITE DATA.
         sync: "yes"
