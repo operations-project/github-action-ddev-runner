@@ -98,6 +98,8 @@ runs:
       if: ${{ inputs.ddev-start == 'yes' }}
       shell: bash
       working-directory: ${{ env.DDEV_PROJECT_PATH_FULL }}
+      env:
+        DDEV_NONINTERACTIVE: "true"
       run: |
         ddev start
 
