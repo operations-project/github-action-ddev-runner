@@ -1,0 +1,42 @@
+#
+# pull-request.yml
+# Use this workflow to delete pull request environments.
+name: Delete Pull Request Environment
+
+on:
+  pull_request:
+    types:
+      - closed
+
+env:
+  # The path on the server to delete, relative to the runner user's home directory.
+  # Must match the value in pull-request.yml
+  # Uncomment to change the default.
+  # DDEV_PROJECT_PATH: "Sites/${{ github.repository }}/pr${{ github.event.number }}"
+
+jobs:
+  delete:
+    name: Delete Environment
+
+    # The label of the runner you wish to use.
+    # Must match the runner that pull-request.yml uses.
+    runs-on: dev.myserver.com
+
+    steps:
+      # Find absolute path to the site using the runner's home directory.
+      # This frees us from having to add the absolute path of the runner to this file.
+      - name: Detect project path
+        run: |
+          echo "DDEV_PROJECT_PATH_FULL=$HOME/$DDEV_PROJECT_PATH" >> "$GITHUB_ENV"
+
+      # Removes the ddev services and data.
+      - name: Remove site
+        working-directory: ${{ env.DDEV_PROJECT_PATH_FULL }}
+        run: |
+          ddev remove --remove-data --omit-snapshot
+
+      # Removes the files.
+      - name: Remove code
+        working-directory: ${{ env.DDEV_PROJECT_PATH_FULL }}
+        run: |
+          rm -rf ${{ env.DDEV_PROJECT_PATH_FULL }}
