@@ -16,7 +16,7 @@ inputs:
     required: false
 
   ddev-fqdns:
-    description: "A list of domains to apply to this environment. Must be a string because of github actions."
+    description: "A list of domains to apply to this environment, separated by a comma."
     required: false
 
   ddev-start:
@@ -92,8 +92,7 @@ runs:
           echo "project_tld: ${{ inputs.ddev-project-tld }}" >> .ddev/config.z.yml
         fi
         if [[ -n "${{ inputs.ddev-fqdns }}" ]]; then
-          echo "additional_fqdns:" >> .ddev/config.z.yml
-          echo "${{ inputs.ddev-fqdns }}" >> .ddev/config.z.yml
+          echo "additional_fqdns: [${{ inputs.ddev-fqdns }}]" >> .ddev/config.z.yml
         fi
 
     # Secrets: https://github.com/thinkdrop/thinkdrop.net/settings/secrets/actions
