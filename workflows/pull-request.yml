@@ -1,0 +1,117 @@
+#
+# pull-request.yml
+# Use this workflow to deploy pull request environments.
+#
+name: Deploy Pull Request Environments
+
+# Only act on pushes to pull request branches.
+on:
+  pull_request:
+
+env:
+  # The domain to show in the GitHub Deployments UI.
+  # Edit to match the domain you are using.
+  # NOTE: This is not explicitly used in the DDEV config.
+  # DDEV creates the domain dynamically based on ddev-project-name and ddev-project-tld.
+  # If the domain DDEV creates does not match, you can add this env var to the ddev-fqdns input.
+  DDEV_PROJECT_DOMAIN: "${{ github.event.repository.name }}.pr${{ github.event.number }}.ci.mysite.com"
+
+  # The base domain name that DDEV will use when starting.
+  # To enable dynamic pull request environments, you must set a wildcard DNS entry for this TLD.
+  #
+  # For example:
+  #   A *.ci.mysite.com  1.2.3.4
+  #
+  # Alternatively, you can leave this out and DDEV will use the runner user's global DDEV config for project-tld.
+  DDEV_PROJECT_TLD: "ci.mysite.com"
+
+  # The path on the server to clone this PRs codebase to, relative to the runner user's home directory.
+  # Uncomment to change the default.
+  # DDEV_PROJECT_PATH: "Sites/${{ github.repository }}/pr${{ github.event.number }}"
+
+jobs:
+  deploy:
+    name: Deploy Site
+    environment:
+      name: "${{ github.event.repository.name }}/pr${{ github.event.number }}"
+      url: "http://${{ env.DDEV_PROJECT_DOMAIN }}?${{ github.run_id }}"
+
+    # The label of the runner you wish to use.
+    # Operations Site Server automatically adds the server's hostname as a label.
+    # Use the hostname label to be sure the workflow runs on the right server.
+    runs-on: dev.myserver.com
+    steps:
+
+      # Runs site-server-ddev GitHub Action.
+      # See https://github.com/operations-platform/site-server-ddev
+      - name: Deploy site
+        uses: operations-platform/ddev-site@main
+        with:
+
+          # Set to "yes" to run the sync-command.
+          sync: yes
+
+          # SSH Settings.
+          # Add to your repository secrets.
+          # Only needed if this site needs to sync from a remote server.
+
+          # Value of ~/.ssh/known_hosts.
+          # Command to get SSH_KNOWN_HOSTS:
+          # ssh-keyscan -H yourliveserver.com -H github.com
+          ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+          # A private key that can access the live site for syncing.
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+          # Set the base domain to use when ddev starts.
+          ddev-project-tld: ${{ env.DDEV_PROJECT_TLD }}
+
+          # A list of domains to apply to this environment. (Must be a string that parses as a yaml array because github actions inputs must be strings)
+          # DDEV will automatically generate a domain based on "ddev-project-name" and "ddev-project-tld" inputs.
+          # If you want an additional domain for this environment, add it here.
+          ddev-fqdns: |
+            - pr${{ github.event.number }}.preview.mysite.com
+
+          # If using a custom path, make sure to pass as an input.
+          # path: ${{ env.DDEV_PROJECT_PATH }}
+
+          # Set whatever sync command works for your project.
+          # The default assumes you have an alias called @live.
+          # sync-command: ddev drush sql:sync @live @self
+
+  test:
+    name: Test Site
+
+    # The label of the runner you wish to use.
+    # Operations Site Server automatically adds the server's hostname as a label.
+    # Use the hostname label to be sure the workflow runs on the right server.
+    runs-on: dev.myserver.com
+
+    # Don't run tests until deploy is done.
+    needs: deploy
+
+    steps:
+      # Find absolute path to the site using the runner's home directory.
+      # This frees us from having to add the absolute path of the runner to this file.
+      - name: Detect project path
+        run: |
+          echo "DDEV_PROJECT_PATH_FULL=$HOME/$DDEV_PROJECT_PATH" >> "$GITHUB_ENV"
+
+      # If tests are failing before first load, Do a CURL to warm the caches.
+      - name: Pre-load URL
+        run: |
+          curl ${{ env.DDEV_PROJECT_DOMAIN }}
+
+      # Run whatever scripts you want.
+      - name: Run Tests
+        working-directory: ${{ env.DDEV_PROJECT_PATH_FULL }}
+        run: |
+          ddev drush behat
+
+      # Upload any test artifacts you need.
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-artifacts
+          path: ${{ env.DDEV_PROJECT_PATH_FULL }}/web/sites/default/files/test_artifacts

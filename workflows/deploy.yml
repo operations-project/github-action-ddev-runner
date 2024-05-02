@@ -58,6 +58,7 @@ jobs:
 
           # SSH Settings.
           # Add to your repository secrets.
+          # Only needed if this site needs to sync from a remote server.
 
           # Value of ~/.ssh/known_hosts.
           # Command to get SSH_KNOWN_HOSTS:
