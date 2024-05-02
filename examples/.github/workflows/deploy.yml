@@ -12,32 +12,29 @@ on:
     branches:
       - main
 
-env:
-  # The relative path to install this site. Make sure it matches the path in cron.yml
-  # For available values, see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-  DDEV_PROJECT_PATH: Sites/${{ github.repository }}/live
-
 jobs:
   deploy:
     name: Deploy to ${{matrix}}
 
+    # Use a matrix for deploying multiple sites.
     strategy:
       matrix:
         include:
+
           - name: live
-            project_tld: live.prod.vancouver.wsu.edu
-            path: /var/platform/vancouver.wsu.edu/live
-            git_reference: main
-    #
-    #          - name: test
-    #            path: /var/platform/vancouver.wsu.edu/test
-    #            git_reference: test
+            path: "Sites/${{ github.repository }}/live"
+            domains: "live.mysite.com,www.mysite.com"
+            git_reference: "main"
+
+          - name: dev
+            path: "Sites/${{ github.repository }}/dev"
+            domains: "dev.mysite.com"
+            git_reference: "main"
 
     # Send a link to GitHub's Deployment API to show to users on GitHub.com.
-    # This workflow is only for your live site, so this can be hard coded.
     environment:
-      name: live
-      url: http://www.mysite.com
+      name: mysite.${{ matrix.name }}
+      url: http://${{ matrix.name }}.mysite.com
 
     # The label of the runner you wish to use.
     # Operations Site Server automatically adds the server's hostname as a label.
@@ -53,10 +50,10 @@ jobs:
         with:
           # For continuous delivery, set to a branch. Merges to the branch will trigger deployment.
           # For manual delivery, you can set this to a tag.
-          git-reference: main
+          git-reference: ${{ matrix.git_reference }}
 
           # The path to install the site, relative to $HOME
-          path: ${{ secrets.DDEV_PROJECT_PATH }}
+          path: ${{ matrix.path }}
 
           # Set to "yes" to run the "sync-command". THIS WILL DESTROY THE SITE DATA.
           # Leave out for sites that should not sync.
@@ -66,7 +63,7 @@ jobs:
           ddev-start: "yes"
 
           # The DDEV project name to use for this environment. Must be unique on this server.
-          ddev-project-name: "mysite.live"
+          ddev-project-name: "mysite.${{ matrix.name }}"
 
           # SSH Settings.
           # Add to your repository secrets.
@@ -81,4 +78,4 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
           # A list of domains to apply to this environment. (Must be a string that parses as a yaml array because github actions inputs must be strings)
-          ddev-fqdns: www.mysite.com,preview.mysite.com
+          ddev-fqdns: ${{ matrix.domains }}
