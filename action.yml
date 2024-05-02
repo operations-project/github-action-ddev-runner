@@ -1,6 +1,11 @@
 name: 'Launch a site with DDEV'
 description: 'Launches a new site using DDEV.'
 inputs:
+  git-repository:
+    description: The full git URL to clone. Defaults to this repository.
+    default: git@github.com:${{ github.repository }}
+    required: false
+
   ddev-project-name:
     description: "The DDEV project name to use for this environment. Will be used in the URL."
     required: false
@@ -71,7 +76,7 @@ runs:
       working-directory: "/"
       run: |
         if [[ ! -d ${{ env.DDEV_PROJECT_PATH_FULL }} ]]; then
-          git clone git@github.com:${{ github.repository }} ${{env.DDEV_PROJECT_PATH_FULL}}
+          git clone ${{ inputs.git-repository }} ${{env.DDEV_PROJECT_PATH_FULL}}
         else
           echo "Git clone exists at ${{env.DDEV_PROJECT_PATH_FULL}}"
         fi
