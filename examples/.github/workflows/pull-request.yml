@@ -72,8 +72,7 @@ jobs:
           # A list of domains to apply to this environment. (Must be a string that parses as a yaml array because github actions inputs must be strings)
           # DDEV will automatically generate a domain based on "ddev-project-name" and "ddev-project-tld" inputs.
           # If you want an additional domain for this environment, add it here.
-          ddev-fqdns: |
-            - pr${{ github.event.number }}.preview.mysite.com
+          ddev-fqdns: pr${{ github.event.number }}.preview.mysite.com
 
           # If using a custom path, make sure to pass as an input.
           # path: ${{ env.DDEV_PROJECT_PATH }}

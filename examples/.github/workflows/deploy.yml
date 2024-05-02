@@ -19,7 +19,19 @@ env:
 
 jobs:
   deploy:
-    name: Deploy to Live
+    name: Deploy to ${{matrix}}
+
+    strategy:
+      matrix:
+        include:
+          - name: live
+            project_tld: live.prod.vancouver.wsu.edu
+            path: /var/platform/vancouver.wsu.edu/live
+            git_reference: main
+    #
+    #          - name: test
+    #            path: /var/platform/vancouver.wsu.edu/test
+    #            git_reference: test
 
     # Send a link to GitHub's Deployment API to show to users on GitHub.com.
     # This workflow is only for your live site, so this can be hard coded.
@@ -69,6 +81,4 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
           # A list of domains to apply to this environment. (Must be a string that parses as a yaml array because github actions inputs must be strings)
-          ddev-fqdns: |
-            - www.mysite.com
-            - preview.mysite.com
+          ddev-fqdns: www.mysite.com,preview.mysite.com
