@@ -46,7 +46,9 @@ inputs:
   sync-command:
     description: "The command to run to sync the sites data. Override if source is not the @live drush alias or sql:sync command does not work for you."
     required: false
-    default: "ddev drush sql:sync @live @self"
+    default: |
+      ddev drush sql:sync @live @self
+      ddev drush rsync @live:%files %files
 
   update-command:
     description: "The command to run to update the sites data."
