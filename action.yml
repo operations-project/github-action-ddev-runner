@@ -75,6 +75,7 @@ runs:
       # Must exist. If not yet cloned,  ${{env.DDEV_PROJECT_PATH}} directory will not exist.
       working-directory: "/"
       run: |
+        echo "${{ inputs.ssh-known-hosts }}" > ~/.ssh/known_hosts
         if [[ ! -d ${{ env.DDEV_PROJECT_PATH_FULL }} ]]; then
           git clone ${{ inputs.git-repository }} ${{env.DDEV_PROJECT_PATH_FULL}}
         else
