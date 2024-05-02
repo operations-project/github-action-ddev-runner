@@ -25,9 +25,17 @@ It will prepare server users, install DDEV, and setup GitHub Runners as a servic
 Usage
 -----
 
-Create your Github Workflow configuration in `.github/workflows/ci.yml` or similar.
+Copy the example workflows located at [](./examples/.github/workflows) to your projects `.github/workflows` folder.
 
-Pull Requests and Live Environments should be handled separately
+The workflows allow all tasks that need to run against your site to be logged in GitHub actions.
+
+- [deploy.yml](./examples/.github/workflows/deploy.yml) - Deploys fixed sites like live/test/dev when specific branches are pushed.
+- [pull-request.yml](./examples/.github/workflows/pull-request.yml) - Deploys pull request environments.
+- [pull-request-closed.yml](./examples/.github/workflows/pull-request-closed.yml) - Removes pull request environments.
+- [cron.yml](./examples/.github/workflows/cron.yml) - Runs Drupal crontab as a scheduled workflow.
+
+Pull Requests and Live Environments must be handled in separate files, so that live sites only deploy on specific branches.
+
 ```yaml
 # ./.github/workflows/pull-requests.yml
 name: Pull Requests
