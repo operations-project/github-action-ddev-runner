@@ -47,6 +47,9 @@ jobs:
       - name: Deploy site
         uses: operations-platform/ddev-site@main
         with:
+          # The git repository to clone.
+          # Comment out to use the current repository.
+          # git-repository: "git@github.com:operations-platform/site-server-drupal-project.git"
 
           # Set to "yes" to run the sync-command.
           sync: yes
