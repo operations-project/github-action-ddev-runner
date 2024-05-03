@@ -37,7 +37,7 @@ jobs:
       url: "http://${{ env.DDEV_PROJECT_DOMAIN }}?${{ github.run_id }}"
 
     # The label of the runner you wish to use.
-    # Operations Site Server automatically adds the server's hostname as a label.
+    # Operations Site Runner automatically adds the server's hostname as a label.
     # Use the hostname label to be sure the workflow runs on the right server.
     runs-on: dev.myserver.com
     steps:
@@ -85,7 +85,7 @@ jobs:
     name: Test Site
 
     # The label of the runner you wish to use.
-    # Operations Site Server automatically adds the server's hostname as a label.
+    # Operations Site Runner automatically adds the server's hostname as a label.
     # Use the hostname label to be sure the workflow runs on the right server.
     runs-on: dev.myserver.com
 

@@ -24,7 +24,7 @@ jobs:
     name: Drupal Cron
 
     # The label of the runner you wish to use.
-    # Operations Site Server automatically adds the server's hostname as a label.
+    # Operations Site Runner automatically adds the server's hostname as a label.
     # Use the hostname label to be sure the workflow runs on the right server.
     runs-on: prod.myserver.com
     steps:
