@@ -6,6 +6,8 @@ DDEV is a tool for launching multiple sites on a single server using Docker.
 
 This action makes it easy to clone a site and launch `ddev start`.
 
+For more detailed documentation and usage examples, see https://operations-project.gitbook.io/operations-experience-project/operations-site-server.
+
 Notes
 -----
 
