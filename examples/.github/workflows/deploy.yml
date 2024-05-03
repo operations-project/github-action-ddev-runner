@@ -44,9 +44,9 @@ jobs:
     steps:
 
       # Runs site-server-ddev GitHub Action.
-      # See https://github.com/operations-platform/site-server-ddev
+      # See https://github.com/operations-project/site-runner-ddev
       - name: Deploy site
-        uses: operations-platform/site-server-ddev@main
+        uses: operations-project/site-runner-ddev@main
         with:
           # For continuous delivery, set to a branch. Merges to the branch will trigger deployment.
           # For manual delivery, you can set this to a tag.

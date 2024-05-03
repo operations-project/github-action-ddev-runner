@@ -1,4 +1,4 @@
-# Operations Site Server: DDEV GitHub Action
+# Operations Site Runner: DDEV GitHub Action
 
 This GitHub Action is designed to host real live sites using self-hosted GitHub runners and DDEV.
 
@@ -15,17 +15,17 @@ If using on a self-hosted runner, make sure you install ddev first.
 
 If running in CI, you can install DDEV in github workflows with this action: https://github.com/Lullabot/drainpipe/blob/main/scaffold/github/actions/common/ddev/action.yml
 
-Operations Site Server
+Operations Site Runner
 ----------------------
 
-You can prepare a server for running sites using the Operations Site Server tool: https://github.com/operations-platform/site-server/
+You can prepare a server for running sites using the Operations Site Runner tool: https://github.com/operations-project/site-runner/
 
 It will prepare server users, install DDEV, and setup GitHub Runners as a service.
 
 Usage
 -----
 
-Copy the example workflows located at [](./examples/.github/workflows) to your projects `.github/workflows` folder.
+Copy the example workflows located at [examples/.github/workflows](./examples/.github/workflows) to your projects `.github/workflows` folder.
 
 The workflows allow all tasks that need to run against your site to be logged in GitHub actions.
 
@@ -44,7 +44,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: operations-platform/site-server-ddev@main
+    - uses: operations-project/site-runner-ddev@main
       with:
         # Set to "yes" to run the "sync-command". THIS WILL DESTROY THE SITE DATA.
         sync: "yes"

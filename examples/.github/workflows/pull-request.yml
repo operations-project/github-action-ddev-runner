@@ -43,13 +43,13 @@ jobs:
     steps:
 
       # Runs site-server-ddev GitHub Action.
-      # See https://github.com/operations-platform/site-server-ddev
+      # See https://github.com/operations-project/site-runner-ddev
       - name: Deploy site
         uses: operations-platform/ddev-site@main
         with:
           # The git repository to clone.
           # Comment out to use the current repository.
-          # git-repository: "git@github.com:operations-platform/site-server-drupal-project.git"
+          # git-repository: "git@github.com:operations-project/site-runner-drupal-project.git"
 
           # Set to "yes" to run the sync-command.
           sync: yes
