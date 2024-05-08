@@ -75,6 +75,7 @@ jobs:
           ddev-fqdns: pr${{ github.event.number }}.preview.mysite.com
 
           # If using a custom path, make sure to pass as an input.
+          # Default: "Sites/${{ github.repository }}/pr${{ github.event.number }}"
           # path: ${{ env.DDEV_PROJECT_PATH }}
 
           # Set whatever sync command works for your project.
