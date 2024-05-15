@@ -20,8 +20,8 @@ inputs:
     required: false
 
   ddev-start:
-    description: "Set to 'no' if you wish to skip the `ddev start` step, removing downtime."
-    default: "yes"
+    description: "If set to 'true', `ddev start` will be run."
+    default: "true"
 
   git-reference:
     description: "The git reference to checkout."
@@ -34,9 +34,9 @@ inputs:
     default: "Sites/${{ github.repository }}/pr${{ github.event.number }}"
 
   sync:
-    description: "If set to 'yes'', the environment will be destroyed and replaced with data using the 'sync-command' input."
+    description: "If set to 'true', the environment will be destroyed and replaced with data using the 'sync-command' input."
     required: false
-    default: "no"
+    default: "false"
 
   composer-install-command:
     description: "The command to run to prepare the codebase"
@@ -103,7 +103,7 @@ runs:
     #       ssh-keyscan -H liveserver.com -H github.com -H otherserver.com
 
     - name: Start DDEV
-      if: ${{ inputs.ddev-start == 'yes' }}
+      if: ${{ inputs.ddev-start == 'true' }}
       shell: bash
       working-directory: ${{ env.DDEV_PROJECT_PATH_FULL }}
       env:
@@ -129,7 +129,7 @@ runs:
         ${{ inputs.composer-install-command }}
 
     - name: Sync
-      if: ${{ inputs.sync == 'yes' }}
+      if: ${{ inputs.sync == 'true' }}
       shell: bash
       working-directory: ${{ env.DDEV_PROJECT_PATH_FULL }}
       run: |
