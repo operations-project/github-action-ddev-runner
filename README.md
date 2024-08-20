@@ -1,4 +1,4 @@
-# Operations Site Runner: DDEV GitHub Action
+# DDEV GitHub Actions Runner
 
 This GitHub Action is designed to host real live sites using self-hosted GitHub runners and DDEV.
 
