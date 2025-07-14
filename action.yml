@@ -112,6 +112,7 @@ runs:
         ddev start
 
     - name: Grant DDEV SSH Access
+      if: ${{ inputs.ddev-start == 'true' }}
       shell: bash
       working-directory: ${{ env.DDEV_PROJECT_PATH_FULL }}
       run: |
