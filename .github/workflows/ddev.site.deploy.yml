@@ -143,8 +143,7 @@ jobs:
           fi
 
       # Install DDEV, if needed.
-      # This can only run if running in an isolated CI container with root access.
-      # @TODO: Figure out how to skip this if ddev already installed.
+      # This only works for runners by sudo users. Don't run it if ddev is already installed.
       - name: Setup DDEV
         uses: ddev/github-action-setup-ddev@v1
         if: ${{ env.DDEV_INSTALLED == 'false' }}
