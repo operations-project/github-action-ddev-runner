@@ -1,0 +1,81 @@
+on:
+  workflow_call:
+    inputs:
+
+      git_repository:
+        required: true
+        type: string
+        description: The repository to deploy.
+
+      git_reference:
+        required: true
+        type: string
+        description: The git reference to deploy.
+
+      path:
+        required: true
+        type: string
+        description: The path to clone the repository into. (Use absolute paths. Otherwise it is relative to the github runner workspace, which is ephemeral.)
+
+      sync_command:
+        default: ddev sync
+        type: string
+        description: The command to run to sync the site from your production instance.
+
+      run_sync:
+        default: false
+        type: boolean
+        description: Whether to run the sync command.
+
+      deploy_command:
+        default: ddev sync
+        type: string
+        description: The command to run after deploying new code.
+
+      run_deploy:
+        default: true
+        type: boolean
+        description: Whether to run the deploy command.
+
+      ddev_project_name:
+        type: string
+        default: ${{ github.event.repository.name }}
+        description: The ddev project name for this environment. Must be unique on this server. Will be used for the default domain using {ddev_project_name}.{ddev_project_tld}.
+
+      ddev_project_tld:
+        type: string
+        description: The top-level domain used for the environment.
+
+      ddev_config:
+        type: string
+        description: Extra ddev configuration for this environment to write to .ddev/config.zzz.workflow.yaml. Use to apply environment-specific configuration, additional_fqdns, etc.
+
+      github_runs_on:
+        type: string
+        default: ubuntu-latest
+        description: The label of the runner you wish to use.
+
+jobs:
+  deploy-code:
+    runs-on: ${{ inputs.github_runs_on }}
+    steps:
+      - name: Hello world
+        run: |
+          echo "-----------------------------"
+          echo "Hello world!"
+          echo "-----------------------------"
+          echo "Who am I: $(whoami)"
+          echo "Hostname: $(hostname -f)"
+          echo "-----------------------------"
+          echo "Path: ${{ inputs.path }}"
+          echo "Git Reference: ${{ inputs.git_reference }}"
+          echo "Git Repository: ${{ inputs.git_repository }}"
+          echo "Sync Command: ${{ inputs.sync_command }}"
+          echo "Deploy Command: ${{ inputs.deploy_command }}"
+          echo "-----------------------------"
+
+          echo "DDEV Config:"
+          echo "${{ inputs.ddev_config }}"
+          echo "Project Name: ${{ inputs.ddev_project_name }}"
+          echo "Project TLD: ${{ inputs.ddev_project_tld }}"
+          echo "-----------------------------"
