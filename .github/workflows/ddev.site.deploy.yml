@@ -30,7 +30,7 @@ on:
         description: The command to launch the site servers.
 
       run_start_command:
-        default: false
+        default: true
         type: boolean
         description: Whether to run the ddev start command.
 
