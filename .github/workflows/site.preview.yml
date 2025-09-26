@@ -4,20 +4,12 @@ on:
 
 env:
   # https://github.com/operations-project/github-runner-starter/settings/secrets/actions/JONPUGH_GITHUB_TOKEN_ADMIN
-  GITHUB_TOKEN: "${{ secrets.JONPUGH_GITHUB_TOKEN_ADMIN }}"
-  RUNNER_CONFIG_NAME: "jonpugh@github-runner.${{ github.run_id }}"
+  GITHUB_TOKEN: "${{ secrets.OPERATIONS_GITHUB_TOKEN_ADMIN }}"
 
 jobs:
   create-server:
     name: Launch a test server
     runs-on: ubuntu-latest
-    env:
-      # Set unique name for each item in the matrix.
-      RUNNER_CONFIG_NAME: "jonpugh@github-runner.${{ github.run_id }}.${{ matrix.runner }}"
-
-      # Add consistent label for all runners.
-      RUNNER_CONFIG_LABELS: "jonpugh@github-runner.${{ github.run_id }}"
-
     strategy:
       matrix:
         # Create one runner for each job that needs to run, including the remote reusable workflow.
@@ -33,7 +25,7 @@ jobs:
           ./github-runner-starter \
             --run \
             --name=github.actions.runner.${{ github.run_id }}.${{ matrix.runner }} \
-            --labels=${RUNNER_CONFIG_LABELS} \
+            --labels=github.actions.runner.${{ github.run_id }}.${{ matrix.runner }} \
             --config-sh-options=--ephemeral
 
   create-site:
