@@ -11,6 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # This emulates a persistent server. The ddev.site.deploy.yml jobs require one.
+  # This job runs the rest. It will stay running until the last job is complete.
   create-server:
     name: Launch a test server
     runs-on: ubuntu-latest
