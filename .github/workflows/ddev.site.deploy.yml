@@ -95,3 +95,11 @@ jobs:
           echo "Project Name: ${{ inputs.ddev_project_name }}"
           echo "Project TLD: ${{ inputs.ddev_project_tld }}"
           echo "-----------------------------"
+
+      - name: Clone code
+        run: |
+          git clone ${{ inputs.git_repository }} ${{ inputs.git_root }} || echo "Git repo exists at ${{ inputs.git_root }}."
+          cd ${{ inputs.git_root }}
+          git checkout ${{ inputs.git_reference }}" 
+          echo "-----------------------------"
+          echo "Cloned code to ${{ inputs.git_root }}""
