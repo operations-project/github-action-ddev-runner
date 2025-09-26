@@ -71,6 +71,7 @@ jobs:
 
   test-site:
     name: Run tests
+    needs: create-site
     runs-on: github.actions.runner.${{ github.run_id }}
     steps:
       - name: Check homepage
