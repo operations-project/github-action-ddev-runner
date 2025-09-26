@@ -98,7 +98,9 @@ jobs:
 
       - name: Clone code
         run: |
-          git clone ${{ inputs.git_repository }} ${{ inputs.git_root }} || echo "Git repo exists at ${{ inputs.git_root }}."
+          if [[ ! -d ${{ inputs.git_root }} ]]; then
+            git clone ${{ inputs.git_repository }} ${{ inputs.git_root }}
+          fi
           cd ${{ inputs.git_root }}
           git checkout ${{ inputs.git_reference }}" 
           echo "-----------------------------"
