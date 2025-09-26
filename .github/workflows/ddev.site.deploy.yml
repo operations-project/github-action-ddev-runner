@@ -17,6 +17,11 @@ on:
         type: string
         description: The path to clone the repository into. (Use absolute paths. Otherwise it is relative to the github runner workspace, which is ephemeral.)
 
+      run_start:
+        default: false
+        type: boolean
+        description: Whether to run the ddev start command.
+
       sync_command:
         default: ddev sync
         type: string
