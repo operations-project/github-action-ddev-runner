@@ -3,16 +3,18 @@ on:
     inputs:
 
       git_repository:
+        default: ${{ github.event.repository.clone_url }}
         required: true
         type: string
         description: The repository to deploy.
 
       git_reference:
+        default: ${{ github.head_ref || github.ref_name }}
         required: true
         type: string
         description: The git reference to deploy.
 
-      path:
+      git_root:
         required: true
         type: string
         description: The path to clone the repository into. (Use absolute paths. Otherwise it is relative to the github runner workspace, which is ephemeral.)
@@ -28,7 +30,7 @@ on:
         description: Whether to run the sync command.
 
       deploy_command:
-        default: ddev sync
+        default: ddev drush deploy
         type: string
         description: The command to run after deploying new code.
 
@@ -55,9 +57,19 @@ on:
         default: ubuntu-latest
         description: The label of the runner you wish to use.
 
+      github_environment:
+        type: string
+        default: ${{ github.head_ref || github.ref_name }}
+        description: The string to use as the github environment.
+
 jobs:
   deploy-code:
     runs-on: ${{ inputs.github_runs_on }}
+
+    environment:
+      name: ${{ inputs.github_environment }}
+      url: "http://${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}?${{ github.run_id }}"
+
     steps:
       - name: Hello world
         run: |
