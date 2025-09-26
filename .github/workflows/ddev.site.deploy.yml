@@ -22,29 +22,36 @@ on:
       git_root:
         required: true
         type: string
-        description: The path to clone the repository into. (Use absolute paths. Otherwise it is relative to the github runner workspace, which is ephemeral.)
+        description: The path to clone the repository into, relative to the runner workspace. Use absolute paths when running a persistent server.
 
-      run_start:
+      start_command:
+        default: ddev start
+        type: string
+        description: The command to launch the site servers.
+
+      run_start_command:
         default: false
         type: boolean
         description: Whether to run the ddev start command.
 
-      sync_command:
-        default: ddev sync
+      # AKA Sync or Install.
+      prepare_command:
+        default: ddev drush site:install
         type: string
-        description: The command to run to sync the site from your production instance.
+        description: The command to run to prepare site data, such as a sync script, migration or install profile.
 
-      run_sync:
+      run_prepare_command:
+        # False by default to prevent data loss. If there is no data, the prepare command will still be run.
         default: false
         type: boolean
-        description: Whether to run the sync command.
+        description: Whether to run the prepare command.
 
       deploy_command:
         default: ddev drush deploy
         type: string
         description: The command to run after deploying new code.
 
-      run_deploy:
+      run_deploy_command:
         default: true
         type: boolean
         description: Whether to run the deploy command.
@@ -114,10 +121,6 @@ jobs:
     runs-on: ${{ inputs.github_runs_on }}
     needs: deploy-code
 
-    environment:
-      name: ${{ inputs.github_environment }}
-      url: "http://${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}?${{ github.run_id }}"
-
     steps:
       - name: Check DDEV Installation
         run: |
@@ -151,6 +154,31 @@ jobs:
           autostart: false
 
       - name: Start site
+        if: ${{ inputs.run_start_command }}
         working-directory: ${{ inputs.git_root }}
         run: |
-          ddev start
+          ${{ input.start_command }}
+
+  # Import, sync, install, etc.
+  prepare-data:
+      name: Prepare data
+      runs-on: ${{ inputs.github_runs_on }}
+      needs: start-site
+
+      environment:
+        name: ${{ inputs.github_environment }}
+        url: "http://${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}?${{ github.run_id }}"
+
+      steps:
+
+        - name: Prepare data
+          working-directory: ${{ inputs.git_root }}
+          if: ${{ inputs.run_prepare_command }}
+          run: |
+            ${{ inputs.prepare_command }}
+
+        - name: Deploy command
+          working-directory: ${{ inputs.git_root }}
+          if: ${{ inputs.run_deploy_command }}
+          run: |
+            ${{ inputs.deploy_command }}
