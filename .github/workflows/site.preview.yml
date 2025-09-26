@@ -1,0 +1,19 @@
+name: Deploy Preview Site
+on:
+  pull_request:
+
+jobs:
+  deploy-site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Preview Site
+        uses: ./.github/workflows/ddev.site.deploy.yml
+        with:
+          git_root: /apps/ourproject/pr${{ github.event.number }}
+          ddev_project_name: ourproject.pr${{ github.event.number }}
+          ddev_project_tld: sites.thinkdrop.net
+          github_environment: pr${{ github.event.number }}
+          github_runs_on: ubuntu-latest
+          ddev_config: |
+            additional_fqdns:
+              - test.pr${{ github.event.number }}.sites.thinkdrop.net
