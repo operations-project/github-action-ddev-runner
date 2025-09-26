@@ -1,3 +1,10 @@
+#
+# DDEV Site Deploy
+#
+# This reusable workflow clones and launches your DDEV projects.
+#
+#
+#
 on:
   workflow_call:
     inputs:
@@ -116,12 +123,35 @@ jobs:
       url: "http://${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}?${{ github.run_id }}"
 
     steps:
+      - name: Check DDEV Installation
+        run: |
+          if [[ `command -v ddev`  ]]; then
+            echo "DDEV is already installed."
+            echo "DDEV_INSTALLED=true" >> $GITHUB_ENV
+          else
+            echo "DDEV is not installed."
+            echo "DDEV_INSTALLED=false" >> $GITHUB_ENV
+          fi
+          
+          if [[ `sudo pwd`  ]]; then
+            echo "Runner has sudo access."
+            echo "RUNNER_SUDO=true" >> $GITHUB_ENV
+          else
+            echo "Runner does not have sudo access."
+            echo "RUNNER_SUDO=false" >> $GITHUB_ENV
+          fi
+          
+          if [[ $DDEV_INSTALLED == "false" && $RUNNER_SUDO == "false" ]]; then
+            echo "Unable to continue. DDEV cannot be installed without sudo access."
+            exit 1
+          fi
 
       # Install DDEV, if needed.
       # This can only run if running in an isolated CI container with root access.
       # @TODO: Figure out how to skip this if ddev already installed.
       - name: Setup DDEV
         uses: ddev/github-action-setup-ddev@v1
+        if: ${{ env.DDEV_INSTALLED == 'false' }}
         with:
           autostart: false
 
