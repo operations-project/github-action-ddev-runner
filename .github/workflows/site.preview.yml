@@ -43,7 +43,7 @@ jobs:
       ddev_project_tld: sites.thinkdrop.net
 
       # Tell the remote workflow what to run on.
-      github_runs_on: ubuntu-latest
+      github_runs_on: github.actions.runner.${{ github.run_id }}.${{ matrix.runner }}
 
       # Define a github environment name.
       github_environment: pr${{ github.event.number }}
