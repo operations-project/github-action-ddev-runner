@@ -76,4 +76,6 @@ jobs:
     steps:
       - name: Check homepage
         run: |
-          curl -s http://pr${{ github.event.number }}.sites.thinkdrop.net
+          curl -s https://github-runner.ddev.site
+# Not writing ddev config yet.
+#          curl -s http://pr${{ github.event.number }}.sites.thinkdrop.net
