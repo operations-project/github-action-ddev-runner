@@ -14,10 +14,6 @@ jobs:
   create-server:
     name: Launch a test server
     runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-        # Create one runner for each job that needs to run, including the remote reusable workflow.
-#        runner: [ 1,2,3 ]
     steps:
       - uses: actions/checkout@v4
         with:
