@@ -9,7 +9,7 @@ jobs:
     with:
 
       # Configure your site  here.
-      git_root: /apps/ourproject/pr${{ github.event.number }}
+      git_root: /home/runner/ourproject/pr${{ github.event.number }}
 
       # Must be unique per server.
       ddev_project_name: ourproject.pr${{ github.event.number }}
