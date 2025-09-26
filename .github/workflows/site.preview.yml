@@ -25,7 +25,7 @@ jobs:
           ./github-runner-starter \
             --run \
             --name=github.actions.runner.${{ github.run_id }}.${{ matrix.runner }} \
-            --labels=github.actions.runner.${{ github.run_id }}.${{ matrix.runner }} \
+            --labels=github.actions.runner.${{ github.run_id }} \
             --config-sh-options=--ephemeral
 
   create-site:
@@ -43,7 +43,7 @@ jobs:
       ddev_project_tld: sites.thinkdrop.net
 
       # Tell the remote workflow what to run on.
-      github_runs_on: github.actions.runner.${{ github.run_id }}.${{ matrix.runner }}
+      github_runs_on: github.actions.runner.${{ github.run_id }}
 
       # Define a github environment name.
       github_environment: pr${{ github.event.number }}
