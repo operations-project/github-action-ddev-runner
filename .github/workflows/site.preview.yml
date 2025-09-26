@@ -56,6 +56,13 @@ jobs:
       # Define a github environment url, a link to be shown on the pull request.
       github_environment_url: pr${{ github.event.number }}.sites.thinkdrop.net
 
+      # To persist a site's data, set "run_prepare_command" to false.
+      run_prepare_command: true
+      prepare_command: echo "Preparing site..."
+
+      # Command to run after deploying code.
+      deploy_command: ddev exec echo "Hello from $(hostname)!"
+
       # Additional ddev config to apply to the environment.
       # Will be saved to .ddev/config.zzz.runner.yaml
       ddev_config: |
