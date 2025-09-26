@@ -52,8 +52,11 @@ jobs:
       # Tell the remote workflow what to run on.
       github_runs_on: github.actions.runner.${{ github.run_id }}
 
-      # Define a github environment name.
-      github_environment: pr${{ github.event.number }}
+      # Define the github environment name, to be displayed in the UI.
+      github_environment_name: pr${{ github.event.number }}
+
+      # Define a github environment url, a link to be shown on the pull request.
+      github_environment_url: pr${{ github.event.number }}.sites.thinkdrop.net
 
       # Additional ddev config to apply to the environment.
       # Will be saved to .ddev/config.zzz.runner.yaml

@@ -74,10 +74,15 @@ on:
         default: ubuntu-latest
         description: The label of the runner you wish to use.
 
-      github_environment:
+      github_environment_name:
         type: string
         default: ${{ github.head_ref || github.ref_name }}
-        description: The string to use as the github environment.
+        description: The string to use as the GitHub environment.
+
+      github_environment_url:
+        type: string
+        default: ${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}
+        description: The URL to use for the GitHub environment..
 
 jobs:
   deploy-code:
@@ -154,31 +159,32 @@ jobs:
           autostart: false
 
       - name: Start site
-        if: ${{ inputs.run_start_command }}
         working-directory: ${{ inputs.git_root }}
+        if: ${{ inputs.run_start_command }}
         run: |
-          ${{ input.start_command }}
+          ${{ inputs.start_command }}
 
   # Import, sync, install, etc.
   prepare-data:
-      name: Prepare data
-      runs-on: ${{ inputs.github_runs_on }}
-      needs: start-site
+    name: Prepare data
+    runs-on: ${{ inputs.github_runs_on }}
+    needs: start-site
 
-      environment:
-        name: ${{ inputs.github_environment }}
-        url: "http://${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}?${{ github.run_id }}"
+    # Show links to this environment in the UI to the site.
+    environment:
+      name: ${{ inputs.github_environment_name }}
+      url: "${{ inputs.github_environment_url }}"
 
-      steps:
+    steps:
 
-        - name: Prepare data
-          working-directory: ${{ inputs.git_root }}
-          if: ${{ inputs.run_prepare_command }}
-          run: |
-            ${{ inputs.prepare_command }}
+      - name: Prepare data
+        working-directory: ${{ inputs.git_root }}
+        if: ${{ inputs.run_prepare_command }}
+        run: |
+          ${{ inputs.prepare_command }}
 
-        - name: Deploy command
-          working-directory: ${{ inputs.git_root }}
-          if: ${{ inputs.run_deploy_command }}
-          run: |
-            ${{ inputs.deploy_command }}
+      - name: Deploy command
+        working-directory: ${{ inputs.git_root }}
+        if: ${{ inputs.run_deploy_command }}
+        run: |
+          ${{ inputs.deploy_command }}
