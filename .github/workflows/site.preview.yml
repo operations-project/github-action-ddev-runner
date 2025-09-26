@@ -6,6 +6,10 @@ env:
   # https://github.com/operations-project/github-runner-starter/settings/secrets/actions/JONPUGH_GITHUB_TOKEN_ADMIN
   GITHUB_TOKEN: "${{ secrets.OPERATIONS_GITHUB_TOKEN_ADMIN }}"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: true
+
 jobs:
   create-server:
     name: Launch a test server
