@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy Preview Site
-        uses: operations-project/github-action-ddev-runner/.github/workflows/ddev.site.deploy.yml
+        uses: operations-project/github-action-ddev-runner/.github/workflows/ddev.site.deploy.yml@feature/reusable-workflows
         with:
           git_root: /apps/ourproject/pr${{ github.event.number }}
           ddev_project_name: ourproject.pr${{ github.event.number }}
