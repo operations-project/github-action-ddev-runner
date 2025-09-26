@@ -102,6 +102,6 @@ jobs:
             git clone ${{ inputs.git_repository }} ${{ inputs.git_root }}
           fi
           cd ${{ inputs.git_root }}
-          git checkout ${{ inputs.git_reference }}" 
-          echo "-----------------------------"
-          echo "Cloned code to ${{ inputs.git_root }}""
+          git checkout ${{ inputs.git_reference }}
+          echo -----------------------------
+          echo "Cloned code to ${{ inputs.git_root }}"
