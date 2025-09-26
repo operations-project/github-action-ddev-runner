@@ -14,23 +14,23 @@ jobs:
   create-server:
     name: Launch a test server
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
+#    strategy:
+#      matrix:
         # Create one runner for each job that needs to run, including the remote reusable workflow.
-        runner: [ 1,2,3 ]
+#        runner: [ 1,2,3 ]
     steps:
       - uses: actions/checkout@v4
         with:
           repository: 'operations-project/github-runner-starter'
           ref: 'v1.2.1'
 
-      - name: "Run Job #${{ matrix.runner }}"
+      - name: "Launch runner script."
         run: |
           ./github-runner-starter \
             --run \
             --name=github.actions.runner.${{ github.run_id }}.${{ matrix.runner }} \
-            --labels=github.actions.runner.${{ github.run_id }} \
-            --config-sh-options=--ephemeral
+            --labels=github.actions.runner.${{ github.run_id }}
+#            --config-sh-options=--ephemeral
 
   create-site:
     name: Create Preview Site
