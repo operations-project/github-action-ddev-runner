@@ -7,11 +7,24 @@ jobs:
     name: Create Preview Site
     uses: operations-project/github-action-ddev-runner/.github/workflows/ddev.site.deploy.yml@feature/reusable-workflows
     with:
+
+      # Configure your site  here.
       git_root: /apps/ourproject/pr${{ github.event.number }}
+
+      # Must be unique per server.
       ddev_project_name: ourproject.pr${{ github.event.number }}
+
+      # Used to create a system domain.
       ddev_project_tld: sites.thinkdrop.net
-      github_environment: pr${{ github.event.number }}
+
+      # Tell the remote workflow what to run on.
       github_runs_on: ubuntu-latest
+
+      # Define a github environment name.
+      github_environment: pr${{ github.event.number }}
+
+      # Additional ddev config to apply to the environment.
+      # Will be saved to .ddev/config.zzz.runner.yaml
       ddev_config: |
         additional_fqdns:
-          - test.pr${{ github.event.number }}.sites.thinkdrop.net
+          - admin.pr${{ github.event.number }}.sites.thinkdrop.net
