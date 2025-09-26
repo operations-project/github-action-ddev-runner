@@ -4,13 +4,11 @@ on:
 
       git_repository:
         default: ${{ github.event.repository.clone_url }}
-        required: true
         type: string
         description: The repository to deploy.
 
       git_reference:
         default: ${{ github.head_ref || github.ref_name }}
-        required: true
         type: string
         description: The git reference to deploy.
 
