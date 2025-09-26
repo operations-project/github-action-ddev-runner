@@ -77,10 +77,6 @@ jobs:
     name: Deploy Code
     runs-on: ${{ inputs.github_runs_on }}
 
-    environment:
-      name: ${{ inputs.github_environment }}
-      url: "http://${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}?${{ github.run_id }}"
-
     steps:
       - name: Hello world
         run: |
