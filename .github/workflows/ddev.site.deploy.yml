@@ -106,11 +106,24 @@ jobs:
           echo -----------------------------
           echo "Cloned code to ${{ inputs.git_root }}"
 
-      # Not possible if runner is not root.
-      # @TODO: Only run if ddev is not installed, and we have root access.
-      # Leaving here for testing, for now.
+  start-site:
+    name: Start site
+    runs-on: ${{ inputs.github_runs_on }}
+    needs: deploy-code
+
+    environment:
+      name: ${{ inputs.github_environment }}
+      url: "http://${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}?${{ github.run_id }}"
+
+    steps:
+
+      # Install DDEV, if needed.
+      # This can only run if running in an isolated CI container with root access.
+      # @TODO: Figure out how to skip this if ddev already installed.
       - name: Setup DDEV
         uses: ddev/github-action-setup-ddev@v1
+        with:
+          autostart: false
 
       - name: Start site
         working-directory: ${{ inputs.git_root }}
