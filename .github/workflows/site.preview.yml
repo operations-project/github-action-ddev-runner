@@ -68,3 +68,11 @@ jobs:
       ddev_config: |
         additional_fqdns:
           - admin.pr${{ github.event.number }}.sites.thinkdrop.net
+
+  test-site:
+    name: Run tests
+    runs-on: github.actions.runner.${{ github.run_id }}
+    steps:
+      - name: Check homepage
+        run: |
+          curl -s http://pr${{ github.event.number }}.sites.thinkdrop.net
