@@ -4,16 +4,13 @@ on:
 
 jobs:
   deploy-site:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy Preview Site
-        uses: operations-project/github-action-ddev-runner/.github/workflows/ddev.site.deploy.yml@feature/reusable-workflows
-        with:
-          git_root: /apps/ourproject/pr${{ github.event.number }}
-          ddev_project_name: ourproject.pr${{ github.event.number }}
-          ddev_project_tld: sites.thinkdrop.net
-          github_environment: pr${{ github.event.number }}
-          github_runs_on: ubuntu-latest
-          ddev_config: |
-            additional_fqdns:
-              - test.pr${{ github.event.number }}.sites.thinkdrop.net
+    uses: operations-project/github-action-ddev-runner/.github/workflows/ddev.site.deploy.yml@feature/reusable-workflows
+    with:
+      git_root: /apps/ourproject/pr${{ github.event.number }}
+      ddev_project_name: ourproject.pr${{ github.event.number }}
+      ddev_project_tld: sites.thinkdrop.net
+      github_environment: pr${{ github.event.number }}
+      github_runs_on: ubuntu-latest
+      ddev_config: |
+        additional_fqdns:
+          - test.pr${{ github.event.number }}.sites.thinkdrop.net
