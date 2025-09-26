@@ -106,6 +106,12 @@ jobs:
           echo -----------------------------
           echo "Cloned code to ${{ inputs.git_root }}"
 
+      # Not possible if runner is not root.
+      # @TODO: Only run if ddev is not installed, and we have root access.
+      # Leaving here for testing, for now.
+      - name: Setup DDEV
+        uses: ddev/github-action-setup-ddev@v1
+
       - name: Start site
         working-directory: ${{ inputs.git_root }}
         run: |

@@ -1,4 +1,4 @@
-name: Deploy Preview Site
+name: Preview Sites
 on:
   pull_request:
 
