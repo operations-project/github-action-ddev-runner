@@ -105,3 +105,8 @@ jobs:
           git checkout ${{ inputs.git_reference }}
           echo -----------------------------
           echo "Cloned code to ${{ inputs.git_root }}"
+
+      - name: Start site
+        working-directory: ${{ inputs.git_root }}
+        run: |
+          ddev start
