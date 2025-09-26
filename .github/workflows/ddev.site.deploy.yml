@@ -62,6 +62,7 @@ on:
 
 jobs:
   deploy-code:
+    name: Deploy Code
     runs-on: ${{ inputs.github_runs_on }}
 
     environment:

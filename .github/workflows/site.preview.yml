@@ -3,7 +3,8 @@ on:
   pull_request:
 
 jobs:
-  deploy-site:
+  create-site:
+    name: Create Preview Site
     uses: operations-project/github-action-ddev-runner/.github/workflows/ddev.site.deploy.yml@feature/reusable-workflows
     with:
       git_root: /apps/ourproject/pr${{ github.event.number }}
