@@ -22,6 +22,14 @@ jobs:
           repository: 'operations-project/github-runner-starter'
           ref: 'v1.2.1'
 
+      # Install DDEV, if needed.
+      # This only works for runners by sudo users. Don't run it if ddev is already installed.
+      - name: Setup DDEV
+        uses: ddev/github-action-setup-ddev@v1
+        if: ${{ env.DDEV_INSTALLED == 'false' }}
+        with:
+          autostart: false
+
       # Kick off the runner script over and over until there are no more queued jobs.
       - name: "Launch runner script."
         run: |
