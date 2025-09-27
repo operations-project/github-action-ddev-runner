@@ -1,6 +1,6 @@
 name: github-runner
 type: php
-docroot: web
+docroot: tests/docroot
 php_version: "8.2"
 webserver_type: nginx-fpm
 xdebug_enabled: false
