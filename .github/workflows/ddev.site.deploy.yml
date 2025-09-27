@@ -69,6 +69,11 @@ on:
         type: string
         description: Extra ddev configuration for this environment to write to .ddev/config.zzz.workflow.yaml. Use to apply environment-specific configuration, additional_fqdns, etc.
 
+      ddev_config_filename:
+        default: "config.zzz.hosting.yaml"
+        type: string
+        description: The file to create in the .ddev folder to store the ddev configuration.
+
       github_runs_on:
         type: string
         default: ubuntu-latest
@@ -82,7 +87,7 @@ on:
       github_environment_url:
         type: string
         default: ${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}
-        description: The URL to use for the GitHub environment..
+        description: The URL to use for the GitHub environment.
 
 jobs:
   deploy-code:
@@ -157,6 +162,14 @@ jobs:
         if: ${{ env.DDEV_INSTALLED == 'false' }}
         with:
           autostart: false
+
+      - name: Configure DDEV
+        working-directory: ${{ inputs.git_root }}/.ddev
+        run: |
+          echo "# DDEV Config created by GitHub workflow https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >  ${{ inputs.ddev_config_filename }}
+          echo "name: ${{ inputs.ddev_project_name }}" >> ${{ inputs.ddev_config_filename }}
+          echo "project_tld: ${{ inputs.ddev_project_tld }}" >> ${{ inputs.ddev_config_filename }}
+          echo "${{ inputs.ddev_config }}" >> .ddev/${{ inputs.ddev_config_filename }}
 
       - name: Start site
         working-directory: ${{ inputs.git_root }}
