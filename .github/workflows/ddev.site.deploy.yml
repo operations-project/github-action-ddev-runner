@@ -98,7 +98,7 @@ jobs:
           echo "Who am I: $(whoami)"
           echo "Hostname: $(hostname -f)"
           echo "-----------------------------"
-          echo "Path: ${{ inputs.path }}"
+          echo "Path: ${{ inputs.git_root }}"
           echo "Git Reference: ${{ inputs.git_reference }}"
           echo "Git Repository: ${{ inputs.git_repository }}"
           echo "Sync Command: ${{ inputs.sync_command }}"
