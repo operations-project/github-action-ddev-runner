@@ -166,6 +166,8 @@ jobs:
       - name: Configure DDEV
         working-directory: ${{ inputs.git_root }}/.ddev
         run: |
+          pwd
+          ls -la ${{ inputs.git_root }}
           echo "# DDEV Config created by GitHub workflow https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >  ${{ inputs.ddev_config_filename }}
           echo "name: ${{ inputs.ddev_project_name }}" >> ${{ inputs.ddev_config_filename }}
           echo "project_tld: ${{ inputs.ddev_project_tld }}" >> ${{ inputs.ddev_config_filename }}
