@@ -74,8 +74,9 @@ jobs:
     needs: create-site
     runs-on: github.actions.runner.${{ github.run_id }}
     steps:
-      - name: Check homepage
+      - name: Check homepage for Hello World.
         run: |
           curl -s https://github-runner.ddev.site
+          curl -s https://github-runner.ddev.site | grep "Hello World!"
 # Not writing ddev config yet.
 #          curl -s http://pr${{ github.event.number }}.sites.thinkdrop.net
