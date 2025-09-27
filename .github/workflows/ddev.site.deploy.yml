@@ -150,6 +150,14 @@ jobs:
             exit 1
           fi
 
+      # Install DDEV, if needed.
+      # This only works for runners by sudo users. Don't run it if ddev is already installed.
+      - name: Setup DDEV
+        uses: ddev/github-action-setup-ddev@v1
+        if: ${{ env.DDEV_INSTALLED == 'false' }}
+        with:
+          autostart: false
+
       - name: Start site
         working-directory: ${{ inputs.git_root }}
         if: ${{ inputs.run_start_command }}
