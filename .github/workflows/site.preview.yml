@@ -69,6 +69,7 @@ jobs:
       ddev_config: |
         additional_fqdns:
           - admin.pr${{ github.event.number }}.sites.thinkdrop.net
+          - ddev-runner.ddev.site
 
   test-site:
     name: Run tests
@@ -77,7 +78,7 @@ jobs:
     steps:
       - name: Check homepage for Hello World.
         run: |
-          curl -s https://github-runner.ddev.site
-          curl -s https://github-runner.ddev.site | grep "Hello World!"
+          curl -s https://ddev-runner.ddev.site
+          curl -s https://ddev-runner.ddev.site | grep "Hello World!"
 # Not writing ddev config yet.
 #          curl -s http://pr${{ github.event.number }}.sites.thinkdrop.net
