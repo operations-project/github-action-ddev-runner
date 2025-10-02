@@ -1,9 +1,6 @@
 #
-# DDEV Site Deploy
-#
-# This reusable workflow clones and launches your DDEV projects.
-#
-#
+#  Site Deploy
+#  via DDEV.
 #
 on:
   workflow_call:
