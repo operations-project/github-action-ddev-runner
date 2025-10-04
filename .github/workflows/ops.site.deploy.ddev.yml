@@ -86,6 +86,9 @@ on:
         default: ${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}
         description: The URL to use for the GitHub environment.
 
+env:
+  PATH: ${{ env.GITHUB_WORKSPACE }}/goatscripts/src:/usr/local/bin:/usr/bin:/bin
+
 jobs:
   deploy-code:
     name: Deploy Code
@@ -173,9 +176,6 @@ jobs:
     environment:
       name: ${{ inputs.github_environment_name }}
       url: "${{ inputs.github_environment_url }}"
-
-    env:
-      PATH: ${{ env.GITHUB_WORKSPACE }}/goatscripts/src:/usr/local/bin:/usr/bin:/bin
 
     steps:
 
