@@ -160,6 +160,7 @@ jobs:
         env:
           HEADER: Started DDEV Site
         run: |
+          ls -la
           .scripts/src/run-with-summary ${{ inputs.start_command }}
 
   # Import, sync, install, etc.
