@@ -181,13 +181,14 @@ jobs:
         with:
           repository: 'jonpugh/goatscripts'
           ref: 'v1.0.0'
-          path: .scripts
           
       - name: Prepare data
         working-directory: ${{ inputs.git_root }}
         if: ${{ inputs.run_prepare_command }}
         run: |
-          .scripts/src/run-with-summary ${{ inputs.prepare_command }}
+          cd ../../github-action-ddev-runner/github-action-ddev-runner/src
+          ls -la 
+          ./run-with-summary ${{ inputs.prepare_command }}
 
       - name: Deploy command
         working-directory: ${{ inputs.git_root }}
