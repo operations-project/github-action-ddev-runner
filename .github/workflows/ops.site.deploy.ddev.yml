@@ -87,7 +87,7 @@ on:
         description: The URL to use for the GitHub environment.
 
 env:
-  PATH: ./goatscripts/src:/usr/local/bin:/usr/bin:/bin
+  PATH: ${{ env.GITHUB_WORKSPACE }}/goatscripts/src:/usr/local/bin:/usr/bin:/bin
 
 jobs:
   deploy-code:
