@@ -36,7 +36,7 @@ jobs:
 
   create-site:
     name: Create Preview Site
-    uses: operations-project/github-action-ddev-runner/.github/workflows/ops.site.deploy.ddev.yml@feature/reusable-workflows
+    uses: operations-project/github-action-ddev-runner/.github/workflows/operations.site.deploy.ddev.yml@feature/reusable-workflows
     with:
 
       # Configure your site  here.
