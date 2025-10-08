@@ -18,7 +18,7 @@ env:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   # This emulates a persistent server. The ddev.site.deploy.yml jobs require one.
@@ -34,6 +34,7 @@ jobs:
 
       # Kick off the runner script over and over until there are no more queued jobs.
       - name: "Launch runner script."
+
         run: |
           while [[ $(curl -s -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" | jq -r '.jobs[] | select(.status=="queued") | .id' | wc -l) -gt 0 ]]; do
             ./github-runner-starter \
@@ -41,7 +42,7 @@ jobs:
             --name=github.actions.runner.${{ github.run_id }}.${{ matrix.runner }} \
             --labels=github.actions.runner.${{ github.run_id }} \
             --config-sh-options=--ephemeral
-          sleep 3
+          sleep 4
           done
 
   create-site:
@@ -86,9 +87,23 @@ jobs:
     needs: create-site
     runs-on: github.actions.runner.${{ github.run_id }}
     steps:
-      - name: Check homepage for Hello World.
+
+      - uses: actions/checkout@v4
+        with:
+          repository: 'jonpugh/goatscripts'
+          ref: 'main'
+          path: goatscripts
+
+      - name: Set environment
         run: |
-          curl -s https://ddev-runner.ddev.site
+          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
+
+      - name: Check homepage for Hello World.
+        env:
+          SUCCESS: "Tests passed! DDEV webserver is online. :boom:"
+          ERROR: "Unable to load DDEV website. :x:"
+        run: |
+          run-with-summary curl https://ddev-runner.ddev.site
           curl -s https://ddev-runner.ddev.site | grep "Hello World!"
 # Not writing ddev config yet.
 #          curl -s http://pr${{ github.event.number }}.sites.thinkdrop.net
