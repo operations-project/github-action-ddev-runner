@@ -1,6 +1,9 @@
 #
-#  Site Deploy
-#  via DDEV.
+# Operations Project Workflow: Deploy DDEV Site.
+#
+# This reusable workflow will deploy a website with DDEV.
+#
+# See https://github.com/operations-project/site-runner-ddev for more information.
 #
 on:
   workflow_call:

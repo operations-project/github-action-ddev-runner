@@ -1,3 +1,11 @@
+#
+# Operations Project Workflow: Example Pull Request Site workflow.
+#
+# This example workflow uses the reusable workflow operations.site.deploy.ddev.yml.
+# You can copy this into your project.
+#
+# See https://github.com/operations-project/site-runner-ddev for more information.
+#
 name: Preview Sites
 on:
   pull_request:
