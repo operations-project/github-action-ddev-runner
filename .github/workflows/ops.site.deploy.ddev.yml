@@ -86,9 +86,6 @@ on:
         default: ${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}
         description: The URL to use for the GitHub environment.
 
-env:
-  PATH: ${{ env.GITHUB_WORKSPACE }}/goatscripts/src:/usr/local/bin:/usr/bin:/bin
-
 jobs:
   deploy-code:
     name: Deploy Code
@@ -143,6 +140,7 @@ jobs:
           echo "name: ${{ inputs.ddev_project_name }}" >> ${{ inputs.ddev_config_filename }}
           echo "project_tld: ${{ inputs.ddev_project_tld }}" >> ${{ inputs.ddev_config_filename }}
           echo "${{ inputs.ddev_config }}" >> ${{ inputs.ddev_config_filename }}
+          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
 
       # Install DDEV, if needed.
       # This only works for runners by sudo users. Don't run it if ddev is already installed.
