@@ -90,10 +90,10 @@ jobs:
 
       - name: Check homepage for Hello World.
         env:
-          SUCCESS: "Tests passed! DDEV webserver is online. :confetti:"
+          SUCCESS: "Tests passed! DDEV webserver is online. :boom:"
           ERROR: "Unable to load DDEV website. :x:"
         run: |
-          run-with-summary curl -s https://ddev-runner.ddev.site
+          run-with-summary curl https://ddev-runner.ddev.site
           curl -s https://ddev-runner.ddev.site | grep "Hello World!"
 # Not writing ddev config yet.
 #          curl -s http://pr${{ github.event.number }}.sites.thinkdrop.net
