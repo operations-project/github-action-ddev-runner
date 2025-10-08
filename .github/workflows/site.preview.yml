@@ -76,9 +76,23 @@ jobs:
     needs: create-site
     runs-on: github.actions.runner.${{ github.run_id }}
     steps:
-      - name: Check homepage for Hello World.
+
+      - uses: actions/checkout@v4
+        with:
+          repository: 'jonpugh/goatscripts'
+          ref: 'main'
+          path: goatscripts
+
+      - name: Set environment
         run: |
-          curl -s https://ddev-runner.ddev.site
+          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
+
+      - name: Check homepage for Hello World.
+        env:
+          SUCCESS: "Tests passed! DDEV webserver is online. :confetti:"
+          ERROR: "Unable to load DDEV website. :x:"
+        run: |
+          run-with-summary curl -s https://ddev-runner.ddev.site
           curl -s https://ddev-runner.ddev.site | grep "Hello World!"
 # Not writing ddev config yet.
 #          curl -s http://pr${{ github.event.number }}.sites.thinkdrop.net
