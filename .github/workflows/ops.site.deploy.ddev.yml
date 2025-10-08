@@ -92,17 +92,29 @@ jobs:
     runs-on: ${{ inputs.github_runs_on }}
 
     steps:
-    
+
       - name: Clone code
+        env:
+          SUCCESS: "Codebase successfully cloned :computer:"
+          ERROR: "Git clone failed :x:"
+          SUMMARY: |
+            - Repository: ${{ inputs.git_repository }}
+            - Reference: ${{ inputs.git_reference }}
+            - Root: ${{ inputs.git_root }}
+            - Environment: ${{ inputs.github_environment_name }}
+            - URL: ${{ inputs.github_environment_url }}
+            - Pull Request: ${{ github.event.pull_request.html_url }}
+
         run: |
-          echo $PATH
+          PATH=$PATH:$GITHUB_WORKSPACE/goatscripts/src
           if [[ ! -d ${{ inputs.git_root }} ]]; then
-            git clone ${{ inputs.git_repository }} ${{ inputs.git_root }}
+            run-with-summary git clone ${{ inputs.git_repository }} ${{ inputs.git_root }}
           fi
           cd ${{ inputs.git_root }}
           git checkout ${{ inputs.git_reference }}
-          echo -----------------------------
-          echo "Cloned code to ${{ inputs.git_root }}"
+          
+          SUCCESS="git status" \
+            run-with-summary git status
 
   start-site:
     name: Start site
