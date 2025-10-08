@@ -11,8 +11,10 @@ on:
   pull_request:
 
 env:
-  # https://github.com/operations-project/github-runner-starter/settings/secrets/actions/JONPUGH_GITHUB_TOKEN_ADMIN
-#  GITHUB_TOKEN: "${{ secrets.OPERATIONS_GITHUB_TOKEN_ADMIN }}"
+  # This example creates github runners for each subsequent job.
+  # To do so, it needs a GitHub token with admin:write permissions.
+  # Create a personal access token with admin:write permissions on the repository you wish to deploy.
+  GITHUB_TOKEN: "${{ secrets.OPERATIONS_GITHUB_TOKEN_ADMIN }}"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number }}
