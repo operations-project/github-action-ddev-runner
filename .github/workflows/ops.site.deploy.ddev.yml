@@ -87,7 +87,7 @@ on:
         description: The URL to use for the GitHub environment.
 
 env:
-  PATH: ${{ env.GITHUB_WORKSPACE }}/goatscripts/src:/usr/local/bin:/usr/bin:/bin
+  PATH: ./goatscripts/src:/usr/local/bin:/usr/bin:/bin
 
 jobs:
   deploy-code:
@@ -155,17 +155,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: 'jonpugh/goatscripts'
-          ref: 'v1.0.0'
-          path: .scripts
+          ref: 'main'
+          path: goatscripts
           
       - name: Start site
         working-directory: ${{ inputs.git_root }}
         if: ${{ inputs.run_start_command }}
         env:
-          HEADER: Started DDEV Site
+          SUCCESS: Started DDEV Site :rocket:
+          ERROR: DDEV start failed :x:
         run: |
-          ls -la
-          .scripts/src/run-with-summary ${{ inputs.start_command }}
+          run-with-summary ${{ inputs.start_command }}
 
   # Import, sync, install, etc.
   prepare-data:
@@ -184,18 +184,17 @@ jobs:
         name: Install scripts
         with:
           repository: 'jonpugh/goatscripts'
-          ref: 'v1.0.0'
+          ref: 'main'
           path: goatscripts
           
       - name: Prepare data
         working-directory: ${{ inputs.git_root }}
         if: ${{ inputs.run_prepare_command }}
         run: |
-          ls -la 
-          ./run-with-summary ${{ inputs.prepare_command }}
+          run-with-summary ${{ inputs.prepare_command }}
 
       - name: Deploy command
         working-directory: ${{ inputs.git_root }}
         if: ${{ inputs.run_deploy_command }}
         run: |
-          .scripts/src/run-with-summary ${{ inputs.deploy_command }}
+          run-with-summary ${{ inputs.deploy_command }}
