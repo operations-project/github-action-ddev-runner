@@ -8,7 +8,7 @@ env:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   # This emulates a persistent server. The ddev.site.deploy.yml jobs require one.
