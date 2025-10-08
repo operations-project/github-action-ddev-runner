@@ -157,15 +157,6 @@ jobs:
             exit 1
           fi
 
-      - name: Configure DDEV
-        working-directory: ${{ inputs.git_root }}/.ddev
-        run: |
-          echo "# DDEV Config created by GitHub workflow https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >  ${{ inputs.ddev_config_filename }}
-          echo "name: ${{ inputs.ddev_project_name }}" >> ${{ inputs.ddev_config_filename }}
-          echo "project_tld: ${{ inputs.ddev_project_tld }}" >> ${{ inputs.ddev_config_filename }}
-          echo "${{ inputs.ddev_config }}" >> ${{ inputs.ddev_config_filename }}
-          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
-
       # Install DDEV, if needed.
       # This only works for runners by sudo users. Don't run it if ddev is already installed.
       - name: Setup DDEV
@@ -173,6 +164,16 @@ jobs:
         if: ${{ env.DDEV_INSTALLED == 'false' }}
         with:
           autostart: false
+
+      - name: Configure DDEV
+        working-directory: ${{ inputs.git_root }}/.ddev
+        run: |
+          ddev config global --instrumentation-opt-in=false
+          echo "# DDEV Config created by GitHub workflow https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >  ${{ inputs.ddev_config_filename }}
+          echo "name: ${{ inputs.ddev_project_name }}" >> ${{ inputs.ddev_config_filename }}
+          echo "project_tld: ${{ inputs.ddev_project_tld }}" >> ${{ inputs.ddev_config_filename }}
+          echo "${{ inputs.ddev_config }}" >> ${{ inputs.ddev_config_filename }}
+          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
 
       - uses: actions/checkout@v4
         with:

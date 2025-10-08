@@ -24,6 +24,7 @@ jobs:
 
       # Kick off the runner script over and over until there are no more queued jobs.
       - name: "Launch runner script."
+
         run: |
           while [[ $(curl -s -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" | jq -r '.jobs[] | select(.status=="queued") | .id' | wc -l) -gt 0 ]]; do
             ./github-runner-starter \
