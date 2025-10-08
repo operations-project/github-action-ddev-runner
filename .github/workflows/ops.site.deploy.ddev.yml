@@ -182,12 +182,11 @@ jobs:
     steps:
 
       - uses: actions/checkout@v4
-        name: Install scripts
         with:
           repository: 'jonpugh/goatscripts'
           ref: 'main'
           path: goatscripts
-          
+
       - name: Prepare data
         working-directory: ${{ inputs.git_root }}
         if: ${{ inputs.run_prepare_command }}
