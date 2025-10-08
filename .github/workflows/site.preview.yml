@@ -32,7 +32,7 @@ jobs:
             --name=github.actions.runner.${{ github.run_id }}.${{ matrix.runner }} \
             --labels=github.actions.runner.${{ github.run_id }} \
             --config-sh-options=--ephemeral
-          sleep 3
+          sleep 4
           done
 
   create-site:
