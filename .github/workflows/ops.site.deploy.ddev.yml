@@ -192,6 +192,7 @@ jobs:
           SUCCESS: "Site data preparation successful :rocket:"
           ERROR: "Site data preparation failed :x:"
         run: |
+          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
           run-with-summary ${{ inputs.prepare_command }}
 
       - name: Deploy command
