@@ -92,36 +92,41 @@ jobs:
     runs-on: ${{ inputs.github_runs_on }}
 
     steps:
-      - name: Hello world
-        run: |
-          echo "-----------------------------"
-          echo "Hello world!"
-          echo "-----------------------------"
-          echo "Who am I: $(whoami)"
-          echo "Hostname: $(hostname -f)"
-          echo "-----------------------------"
-          echo "Path: ${{ inputs.git_root }}"
-          echo "Git Reference: ${{ inputs.git_reference }}"
-          echo "Git Repository: ${{ inputs.git_repository }}"
-          echo "Sync Command: ${{ inputs.sync_command }}"
-          echo "Deploy Command: ${{ inputs.deploy_command }}"
-          echo "-----------------------------"
 
-          echo "DDEV Config:"
-          echo "${{ inputs.ddev_config }}"
-          echo "Project Name: ${{ inputs.ddev_project_name }}"
-          echo "Project TLD: ${{ inputs.ddev_project_tld }}"
-          echo "-----------------------------"
+      - uses: actions/checkout@v4
+        with:
+          repository: 'jonpugh/goatscripts'
+          ref: 'v1.1.0'
+          path: goatscripts
 
       - name: Clone code
+        env:
+          SUCCESS: "Codebase successfully cloned :computer:"
+          ERROR: "Git clone failed :x:"
+          SUMMARY: |
+            - Repository: ${{ inputs.git_repository }}
+            - Reference: ${{ inputs.git_reference }}
+            - Root: ${{ inputs.git_root }}
+            - Environment: ${{ inputs.github_environment_name }}
+            - URL: ${{ inputs.github_environment_url }}
+            - Pull Request: ${{ github.event.pull_request.html_url }}
+
         run: |
+          export PATH=$GITHUB_WORKSPACE/goatscripts/src:$PATH
+          echo $PATH
           if [[ ! -d ${{ inputs.git_root }} ]]; then
-            git clone ${{ inputs.git_repository }} ${{ inputs.git_root }}
+            run-with-summary git clone ${{ inputs.git_repository }} ${{ inputs.git_root }}
           fi
           cd ${{ inputs.git_root }}
           git checkout ${{ inputs.git_reference }}
-          echo -----------------------------
-          echo "Cloned code to ${{ inputs.git_root }}"
+          
+          SUMMARY=""
+          
+          SUCCESS="git status" \
+            run-with-summary git status
+          
+          SUCCESS="git log" \
+            run-with-summary git log -1
 
   start-site:
     name: Start site
@@ -152,14 +157,6 @@ jobs:
             exit 1
           fi
 
-      - name: Configure DDEV
-        working-directory: ${{ inputs.git_root }}/.ddev
-        run: |
-          echo "# DDEV Config created by GitHub workflow https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >  ${{ inputs.ddev_config_filename }}
-          echo "name: ${{ inputs.ddev_project_name }}" >> ${{ inputs.ddev_config_filename }}
-          echo "project_tld: ${{ inputs.ddev_project_tld }}" >> ${{ inputs.ddev_config_filename }}
-          echo "${{ inputs.ddev_config }}" >> ${{ inputs.ddev_config_filename }}
-
       # Install DDEV, if needed.
       # This only works for runners by sudo users. Don't run it if ddev is already installed.
       - name: Setup DDEV
@@ -168,11 +165,30 @@ jobs:
         with:
           autostart: false
 
+      - name: Configure DDEV
+        working-directory: ${{ inputs.git_root }}/.ddev
+        run: |
+          ddev config global --instrumentation-opt-in=false
+          echo "# DDEV Config created by GitHub workflow https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >  ${{ inputs.ddev_config_filename }}
+          echo "name: ${{ inputs.ddev_project_name }}" >> ${{ inputs.ddev_config_filename }}
+          echo "project_tld: ${{ inputs.ddev_project_tld }}" >> ${{ inputs.ddev_config_filename }}
+          echo "${{ inputs.ddev_config }}" >> ${{ inputs.ddev_config_filename }}
+          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
+
+      - uses: actions/checkout@v4
+        with:
+          repository: 'jonpugh/goatscripts'
+          ref: 'v1.1.0'
+          path: goatscripts
+          
       - name: Start site
         working-directory: ${{ inputs.git_root }}
         if: ${{ inputs.run_start_command }}
+        env:
+          SUCCESS: "Started DDEV Site :rocket:"
+          ERROR: "DDEV start failed :x:"
         run: |
-          ${{ inputs.start_command }}
+          run-with-summary ${{ inputs.start_command }}
 
   # Import, sync, install, etc.
   prepare-data:
@@ -187,14 +203,30 @@ jobs:
 
     steps:
 
+      - uses: actions/checkout@v4
+        with:
+          repository: 'jonpugh/goatscripts'
+          ref: 'main'
+          path: goatscripts
+
+      - name: Set environment
+        run: |
+          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
+
       - name: Prepare data
         working-directory: ${{ inputs.git_root }}
         if: ${{ inputs.run_prepare_command }}
+        env:
+          SUCCESS: "Site data preparation successful :rocket:"
+          ERROR: "Site data preparation failed :x:"
         run: |
-          ${{ inputs.prepare_command }}
+          run-with-summary ${{ inputs.prepare_command }}
 
       - name: Deploy command
         working-directory: ${{ inputs.git_root }}
         if: ${{ inputs.run_deploy_command }}
+        env:
+          SUCCESS: "Deploy successful :rocket:"
+          ERROR: "Deploy failed :x:"
         run: |
-          ${{ inputs.deploy_command }}
+          run-with-summary ${{ inputs.deploy_command }}
