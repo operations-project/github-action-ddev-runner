@@ -22,17 +22,11 @@ jobs:
           repository: 'operations-project/github-runner-starter'
           ref: 'v1.2.1'
 
-      - uses: actions/checkout@v4
-        with:
-          repository: 'jonpugh/goatscripts'
-          ref: 'main'
-          path: goatscripts
-
       # Kick off the runner script over and over until there are no more queued jobs.
       - name: "Launch runner script."
         run: |
           while [[ $(curl -s -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" | jq -r '.jobs[] | select(.status=="queued") | .id' | wc -l) -gt 0 ]]; do
-            ./goatscripts/src/run-with-summary ./github-runner-starter \
+            ./github-runner-starter \
             --run \
             --name=github.actions.runner.${{ github.run_id }}.${{ matrix.runner }} \
             --labels=github.actions.runner.${{ github.run_id }} \
