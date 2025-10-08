@@ -93,6 +93,12 @@ jobs:
 
     steps:
 
+      - uses: actions/checkout@v4
+        with:
+          repository: 'jonpugh/goatscripts'
+          ref: 'main'
+          path: goatscripts
+
       - name: Clone code
         env:
           SUCCESS: "Codebase successfully cloned :computer:"
