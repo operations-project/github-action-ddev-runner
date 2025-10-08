@@ -162,8 +162,8 @@ jobs:
         working-directory: ${{ inputs.git_root }}
         if: ${{ inputs.run_start_command }}
         env:
-          SUCCESS: Started DDEV Site :rocket:
-          ERROR: DDEV start failed :x:
+          SUCCESS: "Started DDEV Site :rocket:"
+          ERROR: "DDEV start failed :x:"
         run: |
           run-with-summary ${{ inputs.start_command }}
 
@@ -190,11 +190,17 @@ jobs:
       - name: Prepare data
         working-directory: ${{ inputs.git_root }}
         if: ${{ inputs.run_prepare_command }}
+        env:
+          SUCCESS: "Site data preparation successful :rocket:"
+          ERROR: "Site data preparation failed :x:"
         run: |
           run-with-summary ${{ inputs.prepare_command }}
 
       - name: Deploy command
         working-directory: ${{ inputs.git_root }}
         if: ${{ inputs.run_deploy_command }}
+        env:
+          SUCCESS: "Deploy successful :rocket:"
+          ERROR: "Deploy failed :x:"
         run: |
           run-with-summary ${{ inputs.deploy_command }}
