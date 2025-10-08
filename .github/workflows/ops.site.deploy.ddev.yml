@@ -114,6 +114,7 @@ jobs:
           git checkout ${{ inputs.git_reference }}
           
           SUCCESS="git status" \
+          SUMMARY="" \
             run-with-summary git status
 
   start-site:
