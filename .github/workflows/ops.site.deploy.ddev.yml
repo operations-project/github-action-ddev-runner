@@ -86,9 +86,6 @@ on:
         default: ${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}
         description: The URL to use for the GitHub environment.
 
-env:
-  PATH: "./goatscripts/src:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
-
 jobs:
   deploy-code:
     name: Deploy Code
@@ -186,6 +183,10 @@ jobs:
           repository: 'jonpugh/goatscripts'
           ref: 'main'
           path: goatscripts
+
+      - name: Set environment
+        run: |
+          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
 
       - name: Prepare data
         working-directory: ${{ inputs.git_root }}
