@@ -120,9 +120,13 @@ jobs:
           cd ${{ inputs.git_root }}
           git checkout ${{ inputs.git_reference }}
           
+          SUMMARY=""
+          
           SUCCESS="git status" \
-          SUMMARY="" \
             run-with-summary git status
+          
+          SUCCESS="git log" \
+            run-with-summary git log -1
 
   start-site:
     name: Start site
