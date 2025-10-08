@@ -106,7 +106,7 @@ jobs:
             - Pull Request: ${{ github.event.pull_request.html_url }}
 
         run: |
-          PATH=$PATH:$GITHUB_WORKSPACE/goatscripts/src
+          export PATH=$PATH:$GITHUB_WORKSPACE/goatscripts/src
           if [[ ! -d ${{ inputs.git_root }} ]]; then
             run-with-summary git clone ${{ inputs.git_repository }} ${{ inputs.git_root }}
           fi
