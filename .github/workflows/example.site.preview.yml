@@ -107,3 +107,9 @@ jobs:
           curl -s https://ddev-runner.ddev.site | grep "Hello World!"
 # Not writing ddev config yet.
 #          curl -s http://pr${{ github.event.number }}.sites.thinkdrop.net
+
+  remove-site:
+    name: Remove Site
+    uses: operations-project/github-action-ddev-runner/.github/workflows/operations.site.destroy.ddev.yml@feature/reusable-workflows
+    with:
+      git_root: /home/runner/ourproject/pr${{ github.event.number }}

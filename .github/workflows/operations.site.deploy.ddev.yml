@@ -3,8 +3,9 @@
 #
 # This reusable workflow will deploy a website with DDEV.
 #
-# See https://github.com/operations-project/site-runner-ddev for more information.
+# See https://github.com/operations-project/github-action-ddev-runner for more information.
 #
+name: Deploy site
 on:
   workflow_call:
     inputs:
