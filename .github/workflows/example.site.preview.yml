@@ -114,3 +114,4 @@ jobs:
     needs: test-site
     with:
       git_root: /home/runner/ourproject/pr${{ github.event.number }}
+      github_runs_on: github.actions.runner.${{ github.run_id }}
