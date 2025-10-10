@@ -39,7 +39,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: 'jonpugh/goatscripts'
-          ref: 'main'
+          ref: 'v1.1.0'
           path: goatscripts
 
       - name: Set environment
@@ -66,6 +66,9 @@ jobs:
           repository: 'jonpugh/goatscripts'
           ref: 'v1.1.0'
           path: goatscripts
+
+      - name: Set environment
+        run: echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
 
       - name: Remove code
         env:
