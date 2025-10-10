@@ -43,7 +43,10 @@ jobs:
           path: goatscripts
 
       - name: Set environment
-        run: echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
+        run: |
+          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
+          echo ${{ inputs.git_root }}
+          ls -la ${{ inputs.git_root }}
 
       - name: Destroy site
         working-directory: ${{ inputs.git_root }}
