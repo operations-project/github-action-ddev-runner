@@ -111,5 +111,6 @@ jobs:
   remove-site:
     name: Remove Site
     uses: operations-project/github-action-ddev-runner/.github/workflows/operations.site.destroy.ddev.yml@feature/reusable-workflows
+    needs: test-site
     with:
       git_root: /home/runner/ourproject/pr${{ github.event.number }}
