@@ -1,1 +1,50 @@
+#
+# Site Command.  Use to run any command.
+#
+name: ${{ inputs.workflow_name }}
+on:
+  workflow_call:
+    inputs:
 
+      git_root:
+        required: true
+        type: string
+        description: The path to the existing DDEV site.
+
+      command:
+        type: string
+        description: The command to run.
+        required: true
+
+      github_runs_on:
+        type: string
+        default: ubuntu-latest
+        description: The label of the runner you wish to use.
+
+      workflow_name:
+        type: string
+        default: Run command
+        description: testing.
+
+jobs:
+  run-command:
+    name: Run command
+    runs-on: ${{ inputs.github_runs_on }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: 'jonpugh/goatscripts'
+          ref: 'v1.1.0'
+          path: goatscripts
+
+      - name: Set environment
+        run: echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
+
+      - name: run command
+        env:
+          SUCCESS: ":check: Command complete"
+          ERROR: ":x: Command failed"
+          SUMMARY: |
+            - Root: ${{ inputs.git_root }}
+        run: |
+          run-with-summary ${{ inputs.command }}
