@@ -46,5 +46,6 @@ jobs:
           ERROR: ":x: Command failed"
           SUMMARY: |
             - Root: ${{ inputs.git_root }}
+        working-directory: ${{ inputs.git_root }}
         run: |
           run-with-summary ${{ inputs.command }}
