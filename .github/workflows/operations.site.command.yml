@@ -1,7 +1,7 @@
 #
 # Site Command.  Use to run any command.
 #
-name: ${{ inputs.workflow_name }}
+name: Run command
 on:
   workflow_call:
     inputs:
