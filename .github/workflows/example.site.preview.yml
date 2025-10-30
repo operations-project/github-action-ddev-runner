@@ -82,6 +82,15 @@ jobs:
           - admin.pr${{ github.event.number }}.sites.thinkdrop.net
           - ddev-runner.ddev.site
 
+  run-command:
+    name: DDEV Status
+    uses: operations-project/github-action-ddev-runner/.github/workflows/operations.site.command.yml@feature/reusable-workflows
+    needs: create-site
+    with:
+      git_root: /home/runner/ourproject/pr${{ github.event.number }}
+      github_runs_on: github.actions.runner.${{ github.run_id }}
+      command: ddev status
+
   test-site:
     name: Run tests
     needs: create-site
