@@ -1,75 +1,44 @@
-# DDEV GitHub Actions Runner
+# DDEV Hosting Reusable GitHub Actions
+## Self-hosted automation for ddev projects
 
-This GitHub Action is designed to host real live sites using self-hosted GitHub runners and DDEV.
+These reusable GitHub Workflows allow you to automate the deployment and testing of DDEV sites on your own servers.
 
-DDEV is a tool for launching multiple sites on a single server using Docker.
+Useful for hosting and CI/CD servers.
 
-This action makes it easy to clone a site and launch `ddev start`.
+## Reusable Workflows
 
-For more detailed documentation and usage examples, see https://operations-project.gitbook.io/operations-experience-project/operations-site-server.
+Include these workflows inside your own github workflow files:
 
-Notes
------
+- [`operations.site.deploy.yml`](./.github/workflows/operations.site.deploy.ddev.yml)
+  - **Deploy Code:** git clone and checkout desired branch to desired path.
+  - **Start Site:** Write special DDEV configs and run `ddev start` to launch the site.
+  - **Import Site:** Run your own sync command to import or install your site.
+- [`operations.site.destroy.yml`](./.github/workflows/operations.site.destroy.ddev.yml)
+  - **Remove Site**: `ddev rm -OR`
+  - **Remove Code**: `rm -rf $DIR`
+- More workflows TBD.
 
-This action does NOT install `ddev`. 
+## Server Setup
 
-If using on a self-hosted runner, make sure you install ddev first.
+To prepare a server for running these workflows, you can use the [Operations Site Runner]([url](https://github.com/operations-project/ansible-collection-site-runner)) Ansible collection. see https://github.com/operations-project/ansible-collection-site-runner.
 
-If running in CI, you can install DDEV in github workflows with this action: https://github.com/Lullabot/drainpipe/blob/main/scaffold/github/actions/common/ddev/action.yml
+The main components:
 
-Operations Site Runner
-----------------------
-
-You can prepare a server for running sites using the Operations Site Runner tool: https://github.com/operations-project/site-runner/
-
-It will prepare server users, install DDEV, and setup GitHub Runners as a service.
+- Sysadmin users from GitHub accounts.
+- Platform user for running sites.
+- Control (sudo) user for configuring server.
+- Docker
+- DDEV
+- GitHub runners, one per repository.
 
 Usage
 -----
 
-Copy the example workflows located at [examples/.github/workflows](./examples/.github/workflows) to your projects `.github/workflows` folder.
-
-The workflows allow all tasks that need to run against your site to be logged in GitHub actions.
-
-- [deploy.yml](./examples/.github/workflows/deploy.yml) - Deploys fixed sites like live/test/dev when specific branches are pushed.
-- [pull-request.yml](./examples/.github/workflows/pull-request.yml) - Deploys pull request environments.
-- [pull-request-closed.yml](./examples/.github/workflows/pull-request-closed.yml) - Removes pull request environments.
-- [cron.yml](./examples/.github/workflows/cron.yml) - Runs Drupal crontab as a scheduled workflow.
+Copy the `example.*.yml` workflows located at [.github/workflows/](.github/workflows) to your projects `.github/workflows` folder.
 
 Pull Requests and Live Environments must be handled in separate files, so that live sites only deploy on specific branches.
 
-```yaml
-# ./.github/workflows/pull-requests.yml
-name: Pull Requests
-on: [pull_request]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: operations-project/site-runner-ddev@main
-      with:
-        # Set to "yes" to run the "sync-command". THIS WILL DESTROY THE SITE DATA.
-        sync: "yes"
-
-        # The command to run to sync up the site with data. 
-        # The default (shown) assumes you have a drush alias of @live.
-        sync-command: "ddev drush sql:sync @live @self"
-
-        # Add SSH information to GitHub secrets to connect to remote servers.
-        # Command to get SSH_KNOWN_HOSTS:
-        # ssh-keyscan -H yourliveserver.com -H github.com 
-        ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
-        
-        # Put a private key in secrets and in the live sites `.ssh/authorized_keys` file.
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-        
-        # The DDEV `project_tld` config option determines the URLs that are created for the sites.
-        # You can set the TLD here, or use the GitHub Runner user's global ddev config.
-        ddev-project-tld: "ci.myserver.com"
-
-        # A list of domains to apply to this environment. Must be a string because of github actions.
-        ddev-fqdns: |
-          - preview.${{ github.event.number }}.ci.thinkdrop.net
+For a complete example, see [.github/workflows/example.site.preview.yml](.github/workflows/example.site.preview.yml)
 
 # ... then your own project steps ...
 ```
