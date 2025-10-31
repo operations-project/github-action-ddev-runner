@@ -172,7 +172,6 @@ jobs:
           echo "name: ${{ inputs.ddev_project_name }}" >> ${{ inputs.ddev_config_filename }}
           echo "project_tld: ${{ inputs.ddev_project_tld }}" >> ${{ inputs.ddev_config_filename }}
           echo "${{ inputs.ddev_config }}" >> ${{ inputs.ddev_config_filename }}
-          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
       
       - uses: jonpugh/goatscripts@v1
           
