@@ -96,12 +96,7 @@ jobs:
     runs-on: ${{ inputs.github_runs_on }}
 
     steps:
-
-      - uses: actions/checkout@v4
-        with:
-          repository: 'jonpugh/goatscripts'
-          ref: 'v1.1.0'
-          path: goatscripts
+      - uses: jonpugh/goatscripts@v1
 
       - name: Clone code
         env:
@@ -178,12 +173,8 @@ jobs:
           echo "project_tld: ${{ inputs.ddev_project_tld }}" >> ${{ inputs.ddev_config_filename }}
           echo "${{ inputs.ddev_config }}" >> ${{ inputs.ddev_config_filename }}
           echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
-
-      - uses: actions/checkout@v4
-        with:
-          repository: 'jonpugh/goatscripts'
-          ref: 'v1.1.0'
-          path: goatscripts
+      
+      - uses: jonpugh/goatscripts@v1
           
       - name: Start site
         working-directory: ${{ inputs.git_root }}
@@ -207,16 +198,8 @@ jobs:
 
     steps:
 
-      - uses: actions/checkout@v4
-        with:
-          repository: 'jonpugh/goatscripts'
-          ref: 'main'
-          path: goatscripts
-
-      - name: Set environment
-        run: |
-          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
-
+      - uses: jonpugh/goatscripts@v1
+      
       - name: Prepare data
         working-directory: ${{ inputs.git_root }}
         if: ${{ inputs.run_prepare_command }}
