@@ -37,12 +37,12 @@ jobs:
 
         run: |
           while [[ $(curl -s -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" | jq -r '.jobs[] | select(.status=="queued") | .id' | wc -l) -gt 0 ]]; do
+            sleep 2
             ./github-runner-starter \
             --run \
             --name=github.actions.runner.${{ github.run_id }}.${{ matrix.runner }} \
             --labels=github.actions.runner.${{ github.run_id }} \
             --config-sh-options=--ephemeral
-          sleep 3
           done
 
   create-site:
