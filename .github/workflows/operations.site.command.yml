@@ -31,21 +31,14 @@ jobs:
     name: Run command
     runs-on: ${{ inputs.github_runs_on }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: 'jonpugh/goatscripts'
-          ref: 'v1.1.0'
-          path: goatscripts
-
-      - name: Set environment
-        run: echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
+      - uses: jonpugh/goatscripts@main
 
       - name: run command
         env:
           SUCCESS: ":check: Command complete"
           ERROR: ":x: Command failed"
           SUMMARY: |
-            - Root: ${{ inputs.git_root }}
-        working-directory: ${{ inputs.git_root }}
+            - Root: `${{ inputs.working_directory }}`
+        working-directory: ${{ inputs.working_directory }}
         run: |
           run-with-summary ${{ inputs.command }}
