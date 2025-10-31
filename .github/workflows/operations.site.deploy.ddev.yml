@@ -96,7 +96,7 @@ jobs:
     runs-on: ${{ inputs.github_runs_on }}
 
     steps:
-      - uses: jonpugh/goatscripts@v1
+      - uses: jonpugh/goatscripts@main
 
       - name: Clone code
         env:
@@ -171,7 +171,7 @@ jobs:
           echo "project_tld: ${{ inputs.ddev_project_tld }}" >> ${{ inputs.ddev_config_filename }}
           echo "${{ inputs.ddev_config }}" >> ${{ inputs.ddev_config_filename }}
       
-      - uses: jonpugh/goatscripts@v1
+      - uses: jonpugh/goatscripts@main
           
       - name: Start site
         working-directory: ${{ inputs.git_root }}
@@ -195,7 +195,7 @@ jobs:
 
     steps:
 
-      - uses: jonpugh/goatscripts@v1
+      - uses: jonpugh/goatscripts@main
       
       - name: Prepare data
         working-directory: ${{ inputs.git_root }}
