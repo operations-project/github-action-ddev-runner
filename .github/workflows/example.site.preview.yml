@@ -87,7 +87,7 @@ jobs:
     uses: operations-project/github-action-ddev-runner/.github/workflows/operations.site.command.yml@feature/reusable-workflows
     needs: create-site
     with:
-      git_root: /home/runner/ourproject/pr${{ github.event.number }}
+      working_directory: /home/runner/ourproject/pr${{ github.event.number }}
       github_runs_on: github.actions.runner.${{ github.run_id }}
       command: ddev status
 
