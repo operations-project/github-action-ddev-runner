@@ -24,7 +24,7 @@ jobs:
   # This emulates a persistent server. The ddev.site.deploy.yml jobs require one.
   # This job runs the rest. It will stay running until the last job is complete.
   create-server:
-    name: Launch a test server
+    name: Launch test runner
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -43,6 +43,7 @@ jobs:
             --name=github.actions.runner.${{ github.run_id }}.${{ matrix.runner }} \
             --labels=github.actions.runner.${{ github.run_id }} \
             --config-sh-options=--ephemeral
+            sleep 2
           done
 
   create-site:
