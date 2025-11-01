@@ -11,7 +11,7 @@ on:
     inputs:
 
       git_repository:
-        default: ${{ github.event.repository.clone_url }}
+        default: ${{ github.event.repository.ssh_url }}
         type: string
         description: The repository to deploy.
 
