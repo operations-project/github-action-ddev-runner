@@ -90,6 +90,9 @@ on:
         default: ${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}
         description: The URL to use for the GitHub environment.
 
+env:
+  DDEV_NONINTERACTIVE: true
+
 jobs:
   deploy-code:
     name: Deploy Code
