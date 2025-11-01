@@ -130,6 +130,7 @@ jobs:
             run-with-summary git log -1
           
           git fetch
+          git checkout ${{ inputs.git_reference }}
           git reset --hard origin/${{ inputs.git_reference }}
           
           SUCCESS="Post deploy git status" \
