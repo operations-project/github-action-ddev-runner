@@ -21,10 +21,11 @@ on:
         default: ubuntu-latest
         description: The label of the runner you wish to use.
 
-      workflow_name:
+      env:
         type: string
-        default: Run command
-        description: testing.
+        default: Environment
+        description: |
+          A string of environment variables to set for the command run. To alter the summary, see https://github.com/jonpugh/goatscripts/blob/main/src/run-with-summary 
 
 jobs:
   run-command:
@@ -41,4 +42,5 @@ jobs:
             - Root: `${{ inputs.working_directory }}`
         working-directory: ${{ inputs.working_directory }}
         run: |
+          ${{ inputs.env }}
           run-with-summary ${{ inputs.command }}
