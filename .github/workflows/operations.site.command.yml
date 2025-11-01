@@ -23,7 +23,6 @@ on:
 
       env:
         type: string
-        default: Environment
         description: |
           A string of environment variables to set for the command run. To alter the summary, see https://github.com/jonpugh/goatscripts/blob/main/src/run-with-summary 
 
