@@ -112,7 +112,6 @@ jobs:
 
         run: |
           if [[ ! -d ${{ inputs.git_root }} ]]; then
-            mkdir -p $(dirname ${{ inputs.git_root }})
             run-with-summary git clone ${{ inputs.git_repository }} ${{ inputs.git_root }}
           fi
           cd ${{ inputs.git_root }}
