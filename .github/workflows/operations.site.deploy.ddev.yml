@@ -144,6 +144,11 @@ jobs:
     runs-on: ${{ inputs.github_runs_on }}
     needs: deploy-code
 
+    # Show links to this environment in the UI to the site.
+    environment:
+      name: ${{ inputs.github_environment_name }}
+      url: "${{ inputs.github_environment_url }}"
+      
     steps:
       - name: Check DDEV Installation
         run: |
