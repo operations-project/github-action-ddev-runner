@@ -1,10 +1,10 @@
 #
-# Operations Project Workflow: Example Pull Request Site workflow.
+# This workflow is for testing the re-usable ones workflows.
 #
-# This example workflow uses the reusable workflow operations.site.deploy.ddev.yml.
-# You can copy this into your project.
+# It contains multiple steps, including starting and tearing down a site.
+# It doesn't make sense to use this example directly.
 #
-# See https://github.com/operations-project/site-runner-ddev for more information.
+# See the example.* files for that.
 #
 name: Preview Sites
 on:
