@@ -104,16 +104,7 @@ jobs:
     runs-on: github.actions.runner.${{ github.run_id }}
     steps:
 
-      - uses: actions/checkout@v4
-        with:
-          repository: 'jonpugh/goatscripts'
-          ref: 'main'
-          path: goatscripts
-
-      - name: Set environment
-        run: |
-          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
-
+      - uses: jonpugh/goatscripts@main
       - name: Check homepage for Hello World.
         env:
           SUCCESS: "Tests passed! DDEV webserver is online. :boom:"
@@ -121,8 +112,6 @@ jobs:
         run: |
           run-with-summary curl https://ddev-runner.ddev.site
           curl -s https://ddev-runner.ddev.site | grep "Hello World!"
-# Not writing ddev config yet.
-#          curl -s http://pr${{ github.event.number }}.sites.thinkdrop.net
 
   remove-site:
     name: Remove Site
