@@ -201,6 +201,7 @@ jobs:
     name: Prepare data
     runs-on: ${{ inputs.github_runs_on }}
     needs: start-site
+    if: ${{ inputs.run_prepare_command && inputs.prepare_command}}
 
     # Show links to this environment in the UI to the site.
     environment:
@@ -213,7 +214,6 @@ jobs:
       
       - name: Prepare data
         working-directory: ${{ inputs.git_root }}
-        if: ${{ inputs.run_prepare_command }}
         env:
           SUCCESS: "Site data preparation successful :rocket:"
           ERROR: "Site data preparation failed :x:"
@@ -222,7 +222,6 @@ jobs:
 
       - name: Deploy command
         working-directory: ${{ inputs.git_root }}
-        if: ${{ inputs.run_deploy_command }}
         env:
           SUCCESS: "Deploy successful :rocket:"
           ERROR: "Deploy failed :x:"
