@@ -91,6 +91,9 @@ jobs:
       working_directory: /home/runner/ourproject/pr${{ github.event.number }}
       github_runs_on: github.actions.runner.${{ github.run_id }}
       command: ddev status
+      env: |
+        SUCCESS="DDEV Status"
+        HIDE=1
 
   test-site:
     name: Run tests
