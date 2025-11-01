@@ -116,10 +116,11 @@ jobs:
 
         run: |
           if [[ ! -d ${{ inputs.git_root }} ]]; then
-            run-with-summary git clone ${{ inputs.git_repository }} ${{ inputs.git_root }}
+            run-with-summary git clone --recursive ${{ inputs.git_repository }} ${{ inputs.git_root }}
           fi
           cd ${{ inputs.git_root }}
-          git checkout ${{ inputs.git_reference }}
+          git fetch origin
+          git checkout --force ${{ inputs.git_reference }}
           
           SUMMARY=""
           
