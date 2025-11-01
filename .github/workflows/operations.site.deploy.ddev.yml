@@ -119,16 +119,20 @@ jobs:
             run-with-summary git clone --recursive ${{ inputs.git_repository }} ${{ inputs.git_root }}
           fi
           cd ${{ inputs.git_root }}
-          git fetch origin
-          git checkout --force ${{ inputs.git_reference }}
-          
+
           SUMMARY=""
+
+          SUCCESS="Pre-deploy git status" \
+            run-with-summary git log -1
           
+          git fetch
+          git reset --hard origin/${{ inputs.git_reference }}
+          
+          SUCCESS="Post deploy git status" \
+            run-with-summary git log -1
+
           SUCCESS="git status" \
             run-with-summary git status
-          
-          SUCCESS="git log" \
-            run-with-summary git log -1
 
   start-site:
     name: Start site
