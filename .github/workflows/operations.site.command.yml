@@ -35,7 +35,7 @@ jobs:
 
       - name: run command
         env:
-          SUCCESS: ":check: Command complete"
+          SUCCESS: ":white_check_mark: Command complete"
           ERROR: ":x: Command failed"
           SUMMARY: |
             - Root: `${{ inputs.working_directory }}`
