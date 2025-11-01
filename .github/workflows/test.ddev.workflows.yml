@@ -53,6 +53,9 @@ jobs:
 
       # Configure your site  here.
       git_root: /home/runner/ourproject/pr${{ github.event.number }}
+      
+      # Use the http URL.
+      git_repository: ${{ github.event.repository.clone_url }}
 
       # Must be unique per server.
       ddev_project_name: ourproject.pr${{ github.event.number }}
