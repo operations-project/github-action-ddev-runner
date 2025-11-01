@@ -91,7 +91,11 @@ on:
         description: The URL to use for the GitHub environment.
 
 env:
+  # Tell ddev to not set /etc/hosts file.
   DDEV_NONINTERACTIVE: true
+  
+  # Tell run-with-summary to skip the details table.
+  HIDE: true
 
 jobs:
   deploy-code:
