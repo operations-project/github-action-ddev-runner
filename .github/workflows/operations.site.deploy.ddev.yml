@@ -23,6 +23,7 @@ on:
       git_root:
         required: true
         type: string
+        default: ${{ env.GIT_ROOT }}
         description: The path to clone the repository into, relative to the runner workspace. Use absolute paths when running a persistent server.
 
       start_command:
