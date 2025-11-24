@@ -90,12 +90,6 @@ on:
         default: ${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}
         description: The URL to use for the GitHub environment.
 
-      ssh_private_key:
-        type: string
-        description: |
-          A private key with access to your git repository or other servers. 
-          This will be installed with the webfactory/ssh-agent so the key will only be available inside the job.
-
 env:
   # Tell ddev to not set /etc/hosts file.
   DDEV_NONINTERACTIVE: true
@@ -118,9 +112,9 @@ jobs:
 
       # Enable SSH agent to allow preview sites to clone.
       - uses: webfactory/ssh-agent@v0.9.1
-        if: ${{ inputs.SSH_PRIVATE_KEY }}
+        if: ${{ secrets.SSH_PRIVATE_KEY }}
         with:
-          ssh-private-key: ${{ inputs.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Clone code
         env:
