@@ -90,10 +90,15 @@ on:
         default: ${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}
         description: The URL to use for the GitHub environment.
 
+      ssh_private_key:
+        type: string
+        description: |
+          A private key with access to your git repository or other servers. 
+          This will be installed with the webfactory/ssh-agent so the key will only be available inside the job.
 env:
   # Tell ddev to not set /etc/hosts file.
   DDEV_NONINTERACTIVE: true
-  
+
   # Tell run-with-summary to skip the details table.
   HIDE: true
 
@@ -109,6 +114,11 @@ jobs:
 
       - name: Install scripts
         uses: jonpugh/goatscripts@main
+
+      # Enable SSH agent to allow preview sites to clone.
+      - uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Clone code
         env:
@@ -152,8 +162,12 @@ jobs:
     environment:
       name: ${{ inputs.github_environment_name }}
       url: "${{ inputs.github_environment_url }}"
-      
+
     steps:
+
+      - name: Install helper scripts
+        uses: jonpugh/goatscripts@v1
+
       - name: Check DDEV Installation
         run: |
           if [[ `command -v ddev`  ]]; then
