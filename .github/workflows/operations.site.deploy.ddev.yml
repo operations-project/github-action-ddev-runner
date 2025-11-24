@@ -8,6 +8,12 @@
 name: Deploy site
 on:
   workflow_call:
+
+    secrets:
+      SSH_PRIVATE_KEY:
+        description: A private key to use to clone repositories and, optionally, to sync data.
+        required: false
+
     inputs:
 
       git_repository:
@@ -115,9 +121,9 @@ jobs:
 
       # Enable SSH agent to allow preview sites to clone.
       - uses: webfactory/ssh-agent@v0.9.1
-        if: ${{ env.SSH_PRIVATE_KEY }}
+        if: ${{ secrets.SSH_PRIVATE_KEY }}
         with:
-          ssh-private-key: ${{ env.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Clone code
         env:
