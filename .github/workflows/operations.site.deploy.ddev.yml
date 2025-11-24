@@ -97,6 +97,9 @@ env:
   # Tell run-with-summary to skip the details table.
   HIDE: true
 
+  # Start an SSH agent with this private key.
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
 jobs:
   deploy-code:
     name: Deploy Code
@@ -112,9 +115,9 @@ jobs:
 
       # Enable SSH agent to allow preview sites to clone.
       - uses: webfactory/ssh-agent@v0.9.1
-        if: ${{ secrets.SSH_PRIVATE_KEY }}
+        if: ${{ env.SSH_PRIVATE_KEY }}
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ env.SSH_PRIVATE_KEY }}
 
       - name: Clone code
         env:
