@@ -95,6 +95,7 @@ on:
         description: |
           A private key with access to your git repository or other servers. 
           This will be installed with the webfactory/ssh-agent so the key will only be available inside the job.
+
 env:
   # Tell ddev to not set /etc/hosts file.
   DDEV_NONINTERACTIVE: true
@@ -117,8 +118,9 @@ jobs:
 
       # Enable SSH agent to allow preview sites to clone.
       - uses: webfactory/ssh-agent@v0.9.1
+        if: ${{ inputs.SSH_PRIVATE_KEY }}
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ inputs.SSH_PRIVATE_KEY }}
 
       - name: Clone code
         env:
@@ -236,6 +238,12 @@ jobs:
 
       - name: Install scripts
         uses: jonpugh/goatscripts@main
+
+      # Enable SSH agent.
+      - uses: webfactory/ssh-agent@v0.9.1
+        if: ${{ inputs.SSH_PRIVATE_KEY }}
+        with:
+          ssh-private-key: ${{ inputs.SSH_PRIVATE_KEY }}
 
       - name: Prepare data
         working-directory: ${{ inputs.git_root }}
