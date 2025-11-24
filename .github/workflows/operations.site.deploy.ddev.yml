@@ -144,6 +144,8 @@ jobs:
             run-with-summary git clone --recursive ${{ inputs.git_repository }} ${{ inputs.git_root }}
           fi
           cd ${{ inputs.git_root }}
+          git checkout --force ${{ inputs.git_ref }}
+          git submodule sync --recursive
 
           SUMMARY=""
 
