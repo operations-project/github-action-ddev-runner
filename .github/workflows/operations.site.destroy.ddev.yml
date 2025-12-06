@@ -1,0 +1,81 @@
+#
+# Operations Project Workflow: Destroy DDEV Site.
+#
+# This reusable workflow will DESTROY a DDEV hosted website.
+#
+# See https://github.com/operations-project/github-action-ddev-runner for more information.
+#
+name: Destroy site
+on:
+  workflow_call:
+    inputs:
+
+      git_root:
+        required: true
+        type: string
+        description: The path to the existing DDEV site.
+
+      destroy_command:
+        default: ddev remove --remove-data --omit-snapshot
+        type: string
+        description: The command to destroy the site and codebase.
+
+      remove_code:
+        default: true
+        type: boolean
+        description: Whether to remove the codebase.
+
+      github_runs_on:
+        type: string
+        default: ubuntu-latest
+        description: The label of the runner you wish to use.
+
+jobs:
+  destroy-site:
+    name: Destroy site
+    runs-on: ${{ inputs.github_runs_on }}
+    steps:
+
+      - uses: actions/checkout@v4
+        with:
+          repository: 'jonpugh/goatscripts'
+          ref: 'v1.1.0'
+          path: goatscripts
+
+      - name: Set environment
+        run: |
+          echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
+          echo ${{ inputs.git_root }}
+          ls -la ${{ inputs.git_root }}
+
+      - name: Destroy site
+        working-directory: ${{ inputs.git_root }}
+        env:
+          SUCCESS: "DDEV site removed :check_mark:"
+          ERROR: "Unable to remove DDEV site :x:"
+        run: |
+          run-with-summary ${{ inputs.destroy_command }}
+
+  destroy-code:
+    name: Destroy Code
+    runs-on: ${{ inputs.github_runs_on }}
+    needs: destroy-site
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: 'jonpugh/goatscripts'
+          ref: 'v1.1.0'
+          path: goatscripts
+
+      - name: Set environment
+        run: echo "$GITHUB_WORKSPACE/goatscripts/src" >> $GITHUB_PATH
+
+      - name: Remove code
+        env:
+          SUCCESS: "Codebase removed :check_mark:"
+          ERROR: "Unable to remove codebase :x:"
+          SUMMARY: |
+            - Root: ${{ inputs.git_root }}
+        run: |
+          run-with-summary rm -rf ${{ inputs.git_root }}
+

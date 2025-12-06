@@ -1,0 +1,122 @@
+#
+# This workflow is for testing the re-usable ones workflows.
+#
+# It contains multiple steps, including starting and tearing down a site.
+# It doesn't make sense to use this example directly.
+#
+# See the example.* files for that.
+#
+name: Preview Sites
+on:
+  pull_request:
+
+env:
+  # This example creates github runners for each subsequent job.
+  # To do so, it needs a GitHub token with admin:write permissions.
+  # Create a personal access token with admin:write permissions on the repository you wish to deploy.
+  GITHUB_TOKEN: "${{ secrets.OPERATIONS_GITHUB_TOKEN_ADMIN }}"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: false
+
+jobs:
+  # This emulates a persistent server. The ddev.site.deploy.yml jobs require one.
+  # This job runs the rest. It will stay running until the last job is complete.
+  create-server:
+    name: Launch test runner
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: 'operations-project/github-runner-starter'
+          ref: 'v1.2.1'
+
+      # Kick off the runner script over and over until there are no more queued jobs.
+      - name: "Launch runner script."
+
+        run: |
+          while [[ $(curl -s -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" | jq -r '.jobs[] | select(.status=="queued") | .id' | wc -l) -gt 0 ]]; do
+            sleep 2
+            ./github-runner-starter \
+            --run \
+            --name=github.actions.runner.${{ github.run_id }}.${{ matrix.runner }} \
+            --labels=github.actions.runner.${{ github.run_id }} \
+            --config-sh-options=--ephemeral
+            sleep 2
+          done
+
+  create-site:
+    name: Create Preview Site
+    uses: operations-project/github-action-ddev-runner/.github/workflows/operations.site.deploy.ddev.yml@feature/reusable-workflows
+    with:
+
+      # Configure your site  here.
+      git_root: /home/runner/ourproject/pr${{ github.event.number }}
+      
+      # Use the http URL.
+      git_repository: ${{ github.event.repository.clone_url }}
+
+      # Must be unique per server.
+      ddev_project_name: ourproject.pr${{ github.event.number }}
+
+      # Used to create a system domain.
+      ddev_project_tld: sites.thinkdrop.net
+
+      # Tell the remote workflow what to run on.
+      github_runs_on: github.actions.runner.${{ github.run_id }}
+
+      # Define the github environment name, to be displayed in the UI.
+      github_environment_name: pr${{ github.event.number }}
+
+      # Define a github environment url, a link to be shown on the pull request.
+      github_environment_url: http://pr${{ github.event.number }}.sites.thinkdrop.net
+
+      # To persist a site's data, set "run_prepare_command" to false.
+      run_prepare_command: true
+      prepare_command: echo "Preparing site..."
+
+      # Command to run after deploying code.
+      deploy_command: ddev exec echo "Hello from $(hostname)!"
+
+      # Additional ddev config to apply to the environment.
+      # Will be saved to .ddev/config.zzz.runner.yaml
+      ddev_config: |
+        additional_fqdns:
+          - admin.pr${{ github.event.number }}.sites.thinkdrop.net
+          - ddev-runner.ddev.site
+
+  run-command:
+    name: DDEV Status
+    uses: operations-project/github-action-ddev-runner/.github/workflows/operations.site.command.yml@feature/reusable-workflows
+    needs: create-site
+    with:
+      working_directory: /home/runner/ourproject/pr${{ github.event.number }}
+      github_runs_on: github.actions.runner.${{ github.run_id }}
+      command: ddev status
+      env: |
+        SUCCESS="DDEV Status"
+        HIDE=1
+
+  test-site:
+    name: Run tests
+    needs: create-site
+    runs-on: github.actions.runner.${{ github.run_id }}
+    steps:
+
+      - uses: jonpugh/goatscripts@main
+      - name: Check homepage for Hello World.
+        env:
+          SUCCESS: "Tests passed! DDEV webserver is online. :boom:"
+          ERROR: "Unable to load DDEV website. :x:"
+        run: |
+          run-with-summary curl https://ddev-runner.ddev.site
+          curl -s https://ddev-runner.ddev.site | grep "Hello World!"
+
+  remove-site:
+    name: Remove Site
+    uses: operations-project/github-action-ddev-runner/.github/workflows/operations.site.destroy.ddev.yml@feature/reusable-workflows
+    needs: test-site
+    with:
+      git_root: /home/runner/ourproject/pr${{ github.event.number }}
+      github_runs_on: github.actions.runner.${{ github.run_id }}

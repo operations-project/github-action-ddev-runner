@@ -1,0 +1,269 @@
+#
+# Operations Project Workflow: Deploy DDEV Site.
+#
+# This reusable workflow will deploy a website with DDEV.
+#
+# See https://github.com/operations-project/github-action-ddev-runner for more information.
+#
+name: Deploy site
+on:
+  workflow_call:
+
+    secrets:
+      SSH_PRIVATE_KEY:
+        description: A private key to use to clone repositories and, optionally, to sync data.
+        required: false
+
+    inputs:
+
+      git_repository:
+        default: ${{ github.event.repository.ssh_url }}
+        type: string
+        description: The repository to deploy.
+
+      git_reference:
+        default: ${{ github.head_ref || github.ref_name }}
+        type: string
+        description: The git reference to deploy.
+
+      git_root:
+        required: true
+        type: string
+        description: The path to clone the repository into, relative to the runner workspace. Use absolute paths when running a persistent server.
+
+      start_command:
+        default: ddev start
+        type: string
+        description: The command to launch the site servers.
+
+      run_start_command:
+        default: true
+        type: boolean
+        description: Whether to run the ddev start command.
+
+      # AKA Sync or Install.
+      prepare_command:
+        default: ddev drush site:install
+        type: string
+        description: The command to run to prepare site data, such as a sync script, migration or install profile.
+
+      run_prepare_command:
+        # False by default to prevent data loss. If there is no data, the prepare command will still be run.
+        default: false
+        type: boolean
+        description: Whether to run the prepare command.
+
+      deploy_command:
+        default: ddev drush deploy
+        type: string
+        description: The command to run after deploying new code.
+
+      run_deploy_command:
+        default: true
+        type: boolean
+        description: Whether to run the deploy command.
+
+      ddev_project_name:
+        type: string
+        default: ${{ github.event.repository.name }}
+        description: The ddev project name for this environment. Must be unique on this server. Will be used for the default domain using {ddev_project_name}.{ddev_project_tld}.
+
+      ddev_project_tld:
+        type: string
+        description: The top-level domain used for the environment.
+
+      ddev_config:
+        type: string
+        description: Extra ddev configuration for this environment to write to .ddev/config.zzz.workflow.yaml. Use to apply environment-specific configuration, additional_fqdns, etc.
+
+      ddev_config_filename:
+        default: "config.zzz.hosting.yaml"
+        type: string
+        description: The file to create in the .ddev folder to store the ddev configuration.
+
+      github_runs_on:
+        type: string
+        default: ubuntu-latest
+        description: The label of the runner you wish to use.
+
+      github_environment_name:
+        type: string
+        default: ${{ github.head_ref || github.ref_name }}
+        description: The string to use as the GitHub environment.
+
+      github_environment_url:
+        type: string
+        default: ${{ inputs.ddev_project_name }}.${{ inputs.ddev_project_tld }}
+        description: The URL to use for the GitHub environment.
+
+env:
+  # Tell ddev to not set /etc/hosts file.
+  DDEV_NONINTERACTIVE: true
+
+  # Tell run-with-summary to skip the details table.
+  HIDE: true
+
+  # Start an SSH agent with this private key.
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+jobs:
+  deploy-code:
+    name: Deploy Code
+    runs-on: ${{ inputs.github_runs_on }}
+    env:
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    steps:
+
+      - name: Show environment
+        run: env
+
+      - name: Install scripts
+        uses: jonpugh/goatscripts@main
+
+      # Enable SSH agent to allow preview sites to clone.
+      - uses: webfactory/ssh-agent@v0.9.1
+        if: ${{ env.SSH_PRIVATE_KEY }}
+        with:
+          ssh-private-key: ${{ env.SSH_PRIVATE_KEY }}
+
+      - name: Clone code
+        env:
+          SUCCESS: "Codebase successfully cloned :computer:"
+          ERROR: "Git clone failed :x:"
+          SUMMARY: |
+            - Repository: ${{ inputs.git_repository }}
+            - Reference: ${{ inputs.git_reference }}
+            - Root: ${{ inputs.git_root }}
+            - Environment: ${{ inputs.github_environment_name }}
+            - URL: ${{ inputs.github_environment_url }}
+            - Pull Request: ${{ github.event.pull_request.html_url }}
+
+        run: |
+          if [[ ! -d ${{ inputs.git_root }} ]]; then
+            run-with-summary git clone --recursive ${{ inputs.git_repository }} ${{ inputs.git_root }}
+          fi
+          cd ${{ inputs.git_root }}
+          git checkout --force ${{ inputs.git_ref }}
+          git submodule sync --recursive
+
+          SUMMARY=""
+
+          SUCCESS="Pre-deploy git status" \
+            run-with-summary git log -1
+          
+          git fetch
+          git checkout ${{ inputs.git_reference }}
+          git reset --hard origin/${{ inputs.git_reference }}
+          
+          SUCCESS="Post deploy git status" \
+            run-with-summary git log -1
+
+          SUCCESS="git status" \
+            run-with-summary git status
+
+  start-site:
+    name: Start site
+    runs-on: ${{ inputs.github_runs_on }}
+    needs: deploy-code
+
+    # Show links to this environment in the UI to the site.
+    environment:
+      name: ${{ inputs.github_environment_name }}
+      url: "${{ inputs.github_environment_url }}"
+
+    steps:
+
+      - name: Install helper scripts
+        uses: jonpugh/goatscripts@v1
+
+      - name: Check DDEV Installation
+        run: |
+          if [[ `command -v ddev`  ]]; then
+            echo "DDEV is already installed."
+            echo "DDEV_INSTALLED=true" >> $GITHUB_ENV
+          else
+            echo "DDEV is not installed."
+            echo "DDEV_INSTALLED=false" >> $GITHUB_ENV
+          fi
+          
+          if [[ `sudo pwd`  ]]; then
+            echo "Runner has sudo access."
+            echo "RUNNER_SUDO=true" >> $GITHUB_ENV
+          else
+            echo "Runner does not have sudo access."
+            echo "RUNNER_SUDO=false" >> $GITHUB_ENV
+          fi
+          
+          if [[ $DDEV_INSTALLED == "false" && $RUNNER_SUDO == "false" ]]; then
+            echo "Unable to continue. DDEV cannot be installed without sudo access."
+            exit 1
+          fi
+
+      # Install DDEV, if needed.
+      # This only works for runners by sudo users. Don't run it if ddev is already installed.
+      - name: Setup DDEV
+        uses: ddev/github-action-setup-ddev@v1
+        if: ${{ env.DDEV_INSTALLED == 'false' }}
+        with:
+          autostart: false
+
+      - name: Configure DDEV
+        working-directory: ${{ inputs.git_root }}/.ddev
+        run: |
+          ddev config global --instrumentation-opt-in=false
+          echo "# DDEV Config created by GitHub workflow https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >  ${{ inputs.ddev_config_filename }}
+          echo "name: ${{ inputs.ddev_project_name }}" >> ${{ inputs.ddev_config_filename }}
+          echo "project_tld: ${{ inputs.ddev_project_tld }}" >> ${{ inputs.ddev_config_filename }}
+          echo "${{ inputs.ddev_config }}" >> ${{ inputs.ddev_config_filename }}
+
+      - name: Install scripts
+        uses: jonpugh/goatscripts@main
+
+      - name: Start site
+        working-directory: ${{ inputs.git_root }}
+        if: ${{ inputs.run_start_command }}
+        env:
+          SUCCESS: "Started DDEV Site :rocket:"
+          ERROR: "DDEV start failed :x:"
+        run: |
+          run-with-summary ${{ inputs.start_command }}
+
+  # Import, sync, install, etc.
+  prepare-data:
+    name: Prepare data
+    runs-on: ${{ inputs.github_runs_on }}
+    needs: start-site
+    if: ${{ inputs.run_prepare_command && inputs.prepare_command}}
+
+    # Show links to this environment in the UI to the site.
+    environment:
+      name: ${{ inputs.github_environment_name }}
+      url: "${{ inputs.github_environment_url }}"
+
+    steps:
+
+      - name: Install scripts
+        uses: jonpugh/goatscripts@main
+
+      # Enable SSH agent.
+      - uses: webfactory/ssh-agent@v0.9.1
+        if: ${{ inputs.SSH_PRIVATE_KEY }}
+        with:
+          ssh-private-key: ${{ inputs.SSH_PRIVATE_KEY }}
+
+      - name: Prepare data
+        working-directory: ${{ inputs.git_root }}
+        env:
+          SUCCESS: "Site data preparation successful :rocket:"
+          ERROR: "Site data preparation failed :x:"
+        run: |
+          run-with-summary ${{ inputs.prepare_command }}
+
+      - name: Deploy command
+        working-directory: ${{ inputs.git_root }}
+        env:
+          SUCCESS: "Deploy successful :rocket:"
+          ERROR: "Deploy failed :x:"
+        run: |
+          run-with-summary ${{ inputs.deploy_command }}
